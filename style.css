@@ -933,6 +933,34 @@ ul {
   color: var(--text-muted);
 }
 
+.pricing-card__price-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pricing-card__price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pricing-card__price-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.pricing-card__price-values {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
 .pricing-card__features {
   flex: 1;
   display: flex;
