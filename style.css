@@ -208,7 +208,9 @@ ul {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, var(--grape-dark) 0%, var(--grape) 50%, var(--grape-light) 100%);
+  background-color: var(--grape-dark);
+  background-size: cover;
+  background-position: center;
   overflow: hidden;
   padding-top: 80px;
 }
@@ -217,7 +219,10 @@ ul {
   content: '';
   position: absolute;
   inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background: linear-gradient(135deg,
+    rgba(74, 31, 97, 0.88) 0%,
+    rgba(107, 45, 139, 0.75) 50%,
+    rgba(74, 31, 97, 0.70) 100%);
 }
 
 .hero__inner {
@@ -579,6 +584,198 @@ ul {
   font-weight: 700;
   color: var(--grape);
 }
+
+/* ===================================
+   언론보도 카테고리
+   =================================== */
+.press-category {
+  margin-bottom: 56px;
+}
+
+.press-category:last-child {
+  margin-bottom: 0;
+}
+
+.press-category__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--grape-pale);
+}
+
+.press-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.press-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.press-link-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.press-link-item:hover {
+  border-color: var(--grape-light);
+  background: var(--grape-bg);
+  transform: translateX(4px);
+}
+
+.press-link-item__icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.press-link-item__platform {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--grape);
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.press-link-item__desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.press-link-item__arrow {
+  color: var(--grape-light);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ===================================
+   갤러리
+   =================================== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 220px;
+  gap: 12px;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--border);
+}
+
+.gallery-item--wide {
+  grid-column: span 2;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.06);
+}
+
+.gallery-item__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(74, 31, 97, 0.7) 0%, transparent 60%);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.gallery-item:hover .gallery-item__overlay {
+  opacity: 1;
+}
+
+.gallery-item__overlay span {
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 라이트박스 */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox__img {
+  max-width: 90vw;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 8px;
+  opacity: 0.8;
+  transition: opacity var(--transition);
+}
+
+.lightbox__close:hover { opacity: 1; }
+
+.lightbox__prev,
+.lightbox__next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  font-size: 2.5rem;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+  line-height: 1;
+}
+
+.lightbox__prev { left: 20px; }
+.lightbox__next { right: 20px; }
+.lightbox__prev:hover,
+.lightbox__next:hover { background: rgba(255,255,255,0.2); }
 
 /* ===================================
    입점 비용
@@ -985,9 +1182,28 @@ ul {
   }
 }
 
+@media (max-width: 1024px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 600px) {
   .press-grid {
     grid-template-columns: 1fr;
+  }
+
+  .press-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .press-links {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 160px;
   }
 }
 

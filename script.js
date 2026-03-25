@@ -161,6 +161,47 @@
   }
 })();
 
+// ─── 갤러리 라이트박스 ────────────────────────────────────────
+var lightboxImages = [];
+var lightboxIndex = 0;
+
+(function () {
+  var items = document.querySelectorAll('.gallery-item');
+  items.forEach(function (item, i) {
+    lightboxImages.push(item.querySelector('img'));
+  });
+})();
+
+function openLightbox(el) {
+  var img = el.querySelector('img');
+  lightboxIndex = lightboxImages.indexOf(img);
+  var lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightboxImg').alt = img.alt;
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function moveLightbox(dir) {
+  lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+  var img = lightboxImages[lightboxIndex];
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightboxImg').alt = img.alt;
+}
+
+document.addEventListener('keydown', function (e) {
+  var lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') moveLightbox(-1);
+  if (e.key === 'ArrowRight') moveLightbox(1);
+});
+
 // ─── 부드러운 앵커 스크롤 (헤더 높이 오프셋) ─────────────────
 (function () {
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
