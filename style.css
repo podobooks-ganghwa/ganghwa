@@ -1343,3 +1343,77 @@ ul {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ===================================
+   서브 페이지 공통 스타일
+   =================================== */
+
+/* 헤더 항상 배경 표시 (서브 페이지용) */
+.header.scrolled {
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 2px 20px rgba(107,45,139,0.08);
+}
+
+/* 현재 페이지 네비 표시 */
+.header__nav a.active {
+  color: var(--grape);
+  font-weight: 700;
+}
+
+/* 페이지 히어로 */
+.page-hero {
+  background: linear-gradient(135deg, var(--grape-dark) 0%, var(--grape) 60%, var(--grape-light) 100%);
+  color: #fff;
+  padding: 140px 0 80px;
+  text-align: center;
+}
+
+.page-hero__eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 16px;
+}
+
+.page-hero__title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  margin-bottom: 20px;
+  line-height: 1.15;
+}
+
+.page-hero__desc {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.8;
+}
+
+/* 준비 중 */
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 80px 20px;
+  gap: 20px;
+}
+
+.coming-soon__icon {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.coming-soon__title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.coming-soon__desc {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
