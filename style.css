@@ -32,12 +32,13 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  color-scheme: light;
 }
 
 body {
   font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-  color: var(--text);
-  background: var(--white);
+  color: #1a1a2e;
+  background: #ffffff;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
@@ -347,7 +348,7 @@ ul {
    책방 소개 섹션
    =================================== */
 .section--intro {
-  background: var(--white);
+  background: #ffffff;
   padding: 72px 0;
 }
 
@@ -462,7 +463,7 @@ ul {
   max-width: 280px;
   text-align: center;
   padding: 40px 32px;
-  background: var(--white);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
@@ -586,7 +587,7 @@ ul {
 }
 
 .press-card {
-  background: var(--white);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 28px;
@@ -691,7 +692,7 @@ ul {
   align-items: center;
   gap: 12px;
   padding: 14px 18px;
-  background: var(--white);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   text-decoration: none;
@@ -860,7 +861,7 @@ ul {
 
 .pricing-card {
   position: relative;
-  background: var(--white);
+  background: #ffffff;
   border: 2px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 32px 24px;
@@ -1007,7 +1008,7 @@ ul {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  background: var(--white);
+  background: #ffffff;
   transition: box-shadow var(--transition);
 }
 
@@ -1391,7 +1392,7 @@ ul {
 .news-card {
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: #ffffff;
   border: 2px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 36px 28px;
