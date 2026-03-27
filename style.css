@@ -37,7 +37,7 @@ html {
 body {
   font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
   color: var(--text);
-  background: var(--white);
+  background: #f7f2fc;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
@@ -236,9 +236,9 @@ ul {
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg,
-    rgba(107, 45, 139, 0.45) 0%,
-    rgba(155, 77, 202, 0.30) 50%,
-    rgba(107, 45, 139, 0.40) 100%);
+    rgba(74, 31, 97, 0.88) 0%,
+    rgba(107, 45, 139, 0.75) 50%,
+    rgba(74, 31, 97, 0.70) 100%);
 }
 
 .hero__inner {
