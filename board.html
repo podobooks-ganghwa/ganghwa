@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light only" />
+  <title>게시판 — 강화포도책방</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    html { color-scheme: light; }
+    /* ── 히어로 ── */
+    .pg-hero { background: linear-gradient(135deg,#1a1a2e 0%,#4a1942 60%,#7c3aed 100%); color:#fff; padding:140px 0 70px; text-align:center; }
+    .pg-hero__eye { font-size:.8rem; font-weight:700; letter-spacing:.2em; color:rgba(255,255,255,.55); margin-bottom:12px; }
+    .pg-hero__title { font-size:clamp(2rem,5vw,3rem); font-weight:900; margin-bottom:8px; }
+    .pg-hero__sub { font-size:.95rem; color:rgba(255,255,255,.7); }
+    /* ── 탭 ── */
+    .board-wrap { max-width:780px; margin:0 auto; padding:0 20px 120px; }
+    .board-tabs { display:flex; gap:0; margin-bottom:0; border-bottom:2px solid #e5e7eb; margin-top:40px; }
+    .board-tab { flex:1; padding:12px; text-align:center; font-size:.9rem; font-weight:700; cursor:pointer; color:#9ca3af; border:none; background:none; border-bottom:3px solid transparent; margin-bottom:-2px; transition:color .2s,border-color .2s; font-family:inherit; }
+    .board-tab.active { color:#5b21b6; border-bottom-color:#7c3aed; }
+    .board-tab:hover { color:#5b21b6; }
+    /* ── 공지 탭 특별 ── */
+    .board-tab[data-tab="notice"] { position:relative; }
+    .board-tab[data-tab="notice"]::after { content:'🔒'; font-size:.7rem; margin-left:4px; }
+    /* ── 게시판 섹션 ── */
+    .board-section { display:none; animation:fadeUp .25s ease; }
+    .board-section.active { display:block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+    /* ── 게시글 목록 ── */
+    .post-list { list-style:none; padding:0; margin:0; }
+    .post-item { border-bottom:1px solid #f3f4f6; }
+    .post-item:first-child { border-top:1px solid #f3f4f6; }
+    .post-header { display:flex; align-items:center; gap:12px; padding:16px 8px; cursor:pointer; transition:background .15s; border-radius:8px; }
+    .post-header:hover { background:#faf5ff; }
+    .post-badge { font-size:.7rem; font-weight:700; padding:3px 8px; border-radius:50px; white-space:nowrap; flex-shrink:0; }
+    .badge--notice { background:#fef3c7; color:#b45309; }
+    .badge--free { background:#ede9fe; color:#5b21b6; }
+    .badge--suggest { background:#dbeafe; color:#1d4ed8; }
+    .post-title { flex:1; font-size:.95rem; font-weight:700; color:#1a1a2e; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .post-meta { display:flex; gap:10px; font-size:.75rem; color:#9ca3af; white-space:nowrap; flex-shrink:0; }
+    .post-body { background:#faf9ff; border-radius:0 0 10px 10px; padding:20px 20px 20px 24px; display:none; }
+    .post-body.open { display:block; }
+    .post-body__content { font-size:.9rem; color:#374151; line-height:1.9; white-space:pre-wrap; margin-bottom:12px; }
+    .post-body__imgs { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:4px; margin-top:10px; border-radius:8px; overflow:hidden; }
+    .post-body__img { width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer; transition:opacity .15s; }
+    .post-body__img:hover { opacity:.85; }
+    .post-body__foot { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+    .post-body__date { font-size:.76rem; color:#9ca3af; }
+    .post-del { background:none; border:1px solid #fca5a5; color:#ef4444; border-radius:6px; padding:3px 10px; font-size:.75rem; cursor:pointer; font-family:inherit; display:none; }
+    .post-del:hover { background:#fee2e2; }
+    .post-empty { text-align:center; padding:60px 20px; color:#9ca3af; }
+    .post-empty__icon { font-size:2.5rem; margin-bottom:12px; }
+    /* ── 글쓰기 버튼 & 폼 ── */
+    .write-bar { display:flex; justify-content:space-between; align-items:center; margin:20px 0 0; }
+    .write-bar__count { font-size:.82rem; color:#6b7280; }
+    .write-btn { display:flex; align-items:center; gap:6px; padding:8px 18px; background:#7c3aed; color:#fff; border:none; border-radius:50px; font-size:.85rem; font-weight:700; cursor:pointer; font-family:inherit; transition:background .2s; }
+    .write-btn:hover { background:#6d28d9; }
+    .write-btn--notice { background:#b45309; }
+    .write-btn--notice:hover { background:#92400e; }
+    .write-form-box { background:#f5f3ff; border-radius:16px; padding:24px; margin-top:16px; display:none; }
+    .write-form-box.open { display:block; animation:fadeUp .2s ease; }
+    .wform { display:flex; flex-direction:column; gap:12px; }
+    .wform label { font-size:.78rem; font-weight:700; color:#6b7280; display:block; margin-bottom:3px; }
+    .wform input, .wform textarea { width:100%; padding:9px 13px; border:2px solid #e5e7eb; border-radius:9px; font-size:.88rem; font-family:inherit; outline:none; transition:border-color .2s; background:#fff; box-sizing:border-box; }
+    .wform input:focus, .wform textarea:focus { border-color:#7c3aed; }
+    .wform textarea { height:110px; resize:vertical; line-height:1.7; }
+    .wform__row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .wform__btns { display:flex; gap:8px; justify-content:flex-end; }
+    .wform__submit { padding:9px 20px; background:#7c3aed; color:#fff; border:none; border-radius:9px; font-size:.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .wform__submit:hover { background:#6d28d9; }
+    .wform__cancel { padding:9px 16px; background:#f3f4f6; color:#6b7280; border:none; border-radius:9px; font-size:.85rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .wform__cancel:hover { background:#e5e7eb; }
+    .wform__notice-badge { display:inline-block; background:#fef3c7; color:#b45309; font-size:.75rem; font-weight:700; padding:4px 12px; border-radius:50px; margin-bottom:8px; }
+    .board-status { font-size:.82rem; text-align:center; padding:6px; border-radius:8px; display:none; }
+    .board-status.success { display:block; background:#dcfce7; color:#166534; }
+    .board-status.error { display:block; background:#fee2e2; color:#991b1b; }
+    .board-status.loading { display:block; background:#ede9fe; color:#5b21b6; }
+    /* ── 패스워드 모달 ── */
+    .bpw-overlay { position:fixed; inset:0; background:rgba(26,26,46,.55); backdrop-filter:blur(4px); z-index:600; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .25s; }
+    .bpw-overlay.open { opacity:1; pointer-events:auto; }
+    .bpw-modal { background:#fff; border-radius:20px; padding:36px; width:100%; max-width:340px; text-align:center; box-shadow:0 16px 60px rgba(0,0,0,.2); }
+    .bpw-modal__icon { font-size:2.2rem; margin-bottom:12px; }
+    .bpw-modal__title { font-size:1rem; font-weight:900; margin-bottom:4px; color:#1a1a2e; }
+    .bpw-modal__sub { font-size:.82rem; color:#6b7280; margin-bottom:18px; }
+    .bpw-modal__input { width:100%; padding:10px 13px; border:2px solid #e5e7eb; border-radius:9px; font-size:.95rem; font-family:inherit; outline:none; margin-bottom:8px; transition:border-color .2s; box-sizing:border-box; }
+    .bpw-modal__input:focus { border-color:#7c3aed; }
+    .bpw-modal__error { font-size:.78rem; color:#ef4444; margin-bottom:8px; display:none; }
+    .bpw-modal__btn { width:100%; padding:11px; background:#7c3aed; color:#fff; border:none; border-radius:9px; font-size:.9rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .bpw-modal__btn:hover { background:#6d28d9; }
+    /* 라이트박스 */
+    .ac-lb { position:fixed; inset:0; background:rgba(0,0,0,.93); z-index:9999; display:none; align-items:center; justify-content:center; padding:16px; cursor:zoom-out; }
+    .ac-lb.open { display:flex; }
+    .ac-lb img { max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; cursor:default; }
+    .ac-lb__x { position:absolute; top:16px; right:20px; color:#fff; font-size:2rem; cursor:pointer; background:none; border:none; opacity:.8; }
+    .ac-lb__x:hover { opacity:1; }
+    /* 이미지 업로더 */
+    .img-zone { border:2px dashed #e5e7eb; border-radius:10px; padding:16px; text-align:center; cursor:pointer; transition:border-color .2s; }
+    .img-zone:hover,.img-zone.drag { border-color:#7c3aed; background:#faf9ff; }
+    .img-zone__btn { display:inline-block; padding:5px 14px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:7px; font-size:.78rem; cursor:pointer; font-family:inherit; color:#374151; }
+    .img-zone__text { font-size:.78rem; color:#9ca3af; margin-bottom:8px; }
+    .img-preview-strip { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .img-thumb { position:relative; width:64px; height:64px; border-radius:7px; overflow:hidden; border:2px solid #e5e7eb; }
+    .img-thumb img { width:100%; height:100%; object-fit:cover; }
+    .img-thumb__rm { position:absolute; top:2px; right:2px; width:16px; height:16px; border-radius:50%; background:rgba(0,0,0,.65); color:#fff; border:none; cursor:pointer; font-size:.55rem; display:flex; align-items:center; justify-content:center; padding:0; }
+    @media(max-width:600px) { .wform__row2{grid-template-columns:1fr;} .post-meta{display:none;} }
+  </style>
+</head>
+<body>
+  <header class="header scrolled" id="header">
+    <div class="container header__inner">
+      <a href="index.html" class="header__logo">
+        <img src="images/logo.png" alt="강화 포도책방" class="header__logo-img" />
+        <span class="header__logo-text">강화포도책방</span>
+      </a>
+      <nav class="header__nav" id="headerNav">
+        <a href="index.html#news">소식</a>
+        <a href="journal.html">책방일지</a>
+        <a href="program.html">프로그램</a>
+        <a href="story.html">나의 책방이야기</a>
+        <a href="market.html">오이장터</a>
+        <a href="board.html" class="active">게시판</a>
+        <a href="index.html#pricing">입점</a>
+      </nav>
+      <div class="header__actions"><a href="index.html#pricing" class="btn btn--outline">점주 신청</a></div>
+      <button class="header__toggle" id="menuToggle" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="pg-hero">
+    <div class="container">
+      <p class="pg-hero__eye">Community Board</p>
+      <h1 class="pg-hero__title">💬 게시판</h1>
+      <p class="pg-hero__sub">강화포도책방 커뮤니티에 오신 것을 환영합니다</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="board-wrap">
+      <!-- 탭 -->
+      <div class="board-tabs">
+        <button class="board-tab active" data-tab="free">자유게시판</button>
+        <button class="board-tab" data-tab="suggest">건의게시판</button>
+        <button class="board-tab" data-tab="notice">공지사항</button>
+      </div>
+
+      <!-- 자유게시판 -->
+      <div class="board-section active" id="sec-free">
+        <div class="write-bar">
+          <span class="write-bar__count" id="cnt-free">0개의 글</span>
+          <button class="write-btn" id="wbtn-free">✏️ 글쓰기</button>
+        </div>
+        <div class="write-form-box" id="wbox-free">
+          <form class="wform" id="wform-free">
+            <div class="wform__row2">
+              <div><label>작성자 *</label><input type="text" id="free-author" placeholder="이름 또는 닉네임" required maxlength="20" /></div>
+              <div><label>제목 *</label><input type="text" id="free-title" placeholder="제목을 입력하세요" required maxlength="50" /></div>
+            </div>
+            <div><label>내용 *</label><textarea id="free-content" placeholder="자유롭게 글을 써주세요 :)" required></textarea></div>
+            <div>
+              <label>사진 첨부</label>
+              <div id="free-img-zone" class="img-zone">
+                <input type="file" id="free-img-input" accept="image/*" multiple style="display:none" />
+                <div class="img-zone__text">사진 선택 또는 드래그</div>
+                <button type="button" class="img-zone__btn" onclick="document.getElementById('free-img-input').click()">사진 선택</button>
+              </div>
+              <div class="img-preview-strip" id="free-img-strip"></div>
+            </div>
+            <div id="free-status" class="board-status"></div>
+            <div class="wform__btns">
+              <button type="button" class="wform__cancel" id="wcancel-free">취소</button>
+              <button type="submit" class="wform__submit">등록하기</button>
+            </div>
+          </form>
+        </div>
+        <ul class="post-list" id="list-free"><li class="post-empty"><div class="post-empty__icon">💬</div><p>불러오는 중...</p></li></ul>
+      </div>
+
+      <!-- 건의게시판 -->
+      <div class="board-section" id="sec-suggest">
+        <div class="write-bar">
+          <span class="write-bar__count" id="cnt-suggest">0개의 글</span>
+          <button class="write-btn" id="wbtn-suggest">✏️ 건의하기</button>
+        </div>
+        <div class="write-form-box" id="wbox-suggest">
+          <form class="wform" id="wform-suggest">
+            <div class="wform__row2">
+              <div><label>작성자 *</label><input type="text" id="sug-author" placeholder="이름 또는 닉네임" required maxlength="20" /></div>
+              <div><label>제목 *</label><input type="text" id="sug-title" placeholder="건의 제목" required maxlength="50" /></div>
+            </div>
+            <div><label>내용 *</label><textarea id="sug-content" placeholder="건의하실 내용을 적어주세요. 더 나은 책방을 만드는 데 큰 도움이 됩니다." required></textarea></div>
+            <div>
+              <label>사진 첨부</label>
+              <div id="sug-img-zone" class="img-zone">
+                <input type="file" id="sug-img-input" accept="image/*" multiple style="display:none" />
+                <div class="img-zone__text">사진 선택 또는 드래그</div>
+                <button type="button" class="img-zone__btn" onclick="document.getElementById('sug-img-input').click()">사진 선택</button>
+              </div>
+              <div class="img-preview-strip" id="sug-img-strip"></div>
+            </div>
+            <div id="sug-status" class="board-status"></div>
+            <div class="wform__btns">
+              <button type="button" class="wform__cancel" id="wcancel-suggest">취소</button>
+              <button type="submit" class="wform__submit">등록하기</button>
+            </div>
+          </form>
+        </div>
+        <ul class="post-list" id="list-suggest"><li class="post-empty"><div class="post-empty__icon">📝</div><p>불러오는 중...</p></li></ul>
+      </div>
+
+      <!-- 공지사항 -->
+      <div class="board-section" id="sec-notice">
+        <div class="write-bar">
+          <span class="write-bar__count" id="cnt-notice">0개의 공지</span>
+          <button class="write-btn write-btn--notice" id="wbtn-notice">🔒 공지 등록</button>
+        </div>
+        <div class="write-form-box" id="wbox-notice" style="background:#fffbeb;">
+          <div class="wform__notice-badge">📌 관리자 공지</div>
+          <form class="wform" id="wform-notice">
+            <div><label>제목 *</label><input type="text" id="not-title" placeholder="공지 제목" required maxlength="60" /></div>
+            <div><label>내용 *</label><textarea id="not-content" placeholder="공지 내용을 입력하세요" required></textarea></div>
+            <div>
+              <label>사진 첨부</label>
+              <div id="not-img-zone" class="img-zone" style="border-color:#fde68a;">
+                <input type="file" id="not-img-input" accept="image/*" multiple style="display:none" />
+                <div class="img-zone__text">사진 선택 또는 드래그</div>
+                <button type="button" class="img-zone__btn" onclick="document.getElementById('not-img-input').click()">사진 선택</button>
+              </div>
+              <div class="img-preview-strip" id="not-img-strip"></div>
+            </div>
+            <div id="not-status" class="board-status"></div>
+            <div class="wform__btns">
+              <button type="button" class="wform__cancel" id="wcancel-notice">취소</button>
+              <button type="submit" class="wform__submit" style="background:#b45309;">공지 등록하기</button>
+            </div>
+          </form>
+        </div>
+        <ul class="post-list" id="list-notice"><li class="post-empty"><div class="post-empty__icon">📌</div><p>불러오는 중...</p></li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 비밀번호 모달 -->
+  <div class="bpw-overlay" id="bpwOverlay">
+    <div class="bpw-modal">
+      <div class="bpw-modal__icon" id="bpwIcon">🔐</div>
+      <h2 class="bpw-modal__title" id="bpwTitle">비밀번호 확인</h2>
+      <p class="bpw-modal__sub" id="bpwSub">비밀번호를 입력하세요</p>
+      <input type="password" class="bpw-modal__input" id="bpwInput" placeholder="비밀번호" />
+      <p class="bpw-modal__error" id="bpwError">비밀번호가 맞지 않아요</p>
+      <button class="bpw-modal__btn" id="bpwBtn">확인</button>
+    </div>
+  </div>
+
+  <!-- 라이트박스 -->
+  <div class="ac-lb" id="boardLb">
+    <button class="ac-lb__x" id="boardLbClose">✕</button>
+    <img id="boardLbImg" src="" alt="" />
+  </div>
+
+  <footer class="footer footer--deep">
+    <div class="footer__bottom"><div class="container"><p>© 2026 강화포도책방. All rights reserved.</p></div></div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="js/admin-common.js"></script>
+  <script>
+  (function(){
+    const REPO_OWNER = 'podobooks-ganghwa';
+    const REPO_NAME  = 'ganghwa';
+    const BASE_URL   = 'https://podobooks-ganghwa.github.io/ganghwa';
+    const PATH       = 'data/board.json';
+    const ADMIN_PW   = '0402';
+    // 자유/건의는 관리자 비번과 동일하게 (점주들 공용)
+    const BOARD_PW   = '0402';
+
+    let boardData = { free:[], suggest:[], notice:[] };
+    let isAdmin = false; // 공지 쓰기 권한
+    let pendingAction = null; // 비밀번호 확인 후 실행할 함수
+
+    // 이미지 업로더 상태
+    const uploaders = {};
+    ['free','sug','not'].forEach(k => { uploaders[k] = { files:[] }; });
+
+    // 이미지 업로더 초기화
+    function initUploader(k) {
+      const input = document.getElementById(`${k}-img-input`);
+      const zone  = document.getElementById(`${k}-img-zone`);
+      const strip = document.getElementById(`${k}-img-strip`);
+
+      function refresh() {
+        strip.innerHTML = uploaders[k].files.map((f,i) => {
+          const url = URL.createObjectURL(f);
+          return `<div class="img-thumb"><img src="${url}" alt="" /><button type="button" class="img-thumb__rm" onclick="rmImg('${k}',${i})">✕</button></div>`;
+        }).join('');
+      }
+      window[`rmImg`] = (k2,i) => { uploaders[k2].files.splice(i,1); refresh(); };
+      input.addEventListener('change', () => {
+        uploaders[k].files = [...uploaders[k].files, ...Array.from(input.files)];
+        input.value = '';
+        refresh();
+      });
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('drag');
+        uploaders[k].files = [...uploaders[k].files, ...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];
+        refresh();
+      });
+    }
+    ['free','sug','not'].forEach(initUploader);
+
+    // 탭 전환
+    document.querySelectorAll('.board-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.board-tab').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.board-section').forEach(s=>s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('sec-'+btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // 비밀번호 모달
+    function openPwModal(icon, title, sub, onSuccess) {
+      document.getElementById('bpwIcon').textContent = icon;
+      document.getElementById('bpwTitle').textContent = title;
+      document.getElementById('bpwSub').textContent = sub;
+      document.getElementById('bpwInput').value = '';
+      document.getElementById('bpwError').style.display = 'none';
+      pendingAction = onSuccess;
+      document.getElementById('bpwOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('bpwInput').focus(), 100);
+    }
+    function closePwModal() {
+      document.getElementById('bpwOverlay').classList.remove('open');
+      document.getElementById('bpwError').style.display = 'none';
+    }
+    document.getElementById('bpwBtn').addEventListener('click', checkBoardPw);
+    document.getElementById('bpwInput').addEventListener('keydown', e => { if(e.key==='Enter') checkBoardPw(); });
+    document.getElementById('bpwOverlay').addEventListener('click', e => { if(e.target.id==='bpwOverlay') closePwModal(); });
+
+    function checkBoardPw() {
+      const val = document.getElementById('bpwInput').value;
+      if (val === ADMIN_PW) {
+        closePwModal();
+        if (pendingAction) pendingAction();
+      } else {
+        document.getElementById('bpwError').style.display = 'block';
+        document.getElementById('bpwInput').value = '';
+      }
+    }
+
+    // 글쓰기 버튼
+    document.getElementById('wbtn-free').addEventListener('click', () => {
+      openPwModal('✏️','게시판 글쓰기','비밀번호를 입력하세요', () => {
+        document.getElementById('wbox-free').classList.add('open');
+      });
+    });
+    document.getElementById('wbtn-suggest').addEventListener('click', () => {
+      openPwModal('💡','건의게시판 글쓰기','비밀번호를 입력하세요', () => {
+        document.getElementById('wbox-suggest').classList.add('open');
+      });
+    });
+    document.getElementById('wbtn-notice').addEventListener('click', () => {
+      openPwModal('🔒','관리자 공지 등록','관리자 비밀번호를 입력하세요', () => {
+        isAdmin = true;
+        document.getElementById('wbox-notice').classList.add('open');
+        if (!AC.getToken()) AC.promptToken();
+      });
+    });
+
+    ['free','suggest','notice'].forEach(tab => {
+      const key = tab === 'suggest' ? 'sug' : tab === 'notice' ? 'not' : 'free';
+      document.getElementById('wcancel-'+tab).addEventListener('click', () => {
+        document.getElementById('wbox-'+tab).classList.remove('open');
+      });
+    });
+
+    // 라이트박스
+    const lb = document.getElementById('boardLb');
+    document.getElementById('boardLbClose').addEventListener('click', () => lb.classList.remove('open'));
+    lb.addEventListener('click', e => { if(e.target===lb) lb.classList.remove('open'); });
+    window.boardOpenImg = src => { document.getElementById('boardLbImg').src=src; lb.classList.add('open'); };
+
+    // GitHub API
+    function getToken() { return localStorage.getItem('_jt') || sessionStorage.getItem('_jt') || ''; }
+    async function fetchBoard() {
+      const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${PATH}?t=${Date.now()}`;
+      const res = await fetch(url);
+      if (!res.ok) return { free:[], suggest:[], notice:[] };
+      return res.json();
+    }
+    async function saveBoard(data) {
+      const token = getToken();
+      if (!token) throw new Error('NO_TOKEN');
+      const infoRes = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PATH}`,
+        { headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' } }
+      );
+      if (!infoRes.ok) throw new Error('파일 조회 실패');
+      const { sha } = await infoRes.json();
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+      const putRes = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PATH}`,
+        {
+          method:'PUT',
+          headers:{ Authorization:`token ${token}`, Accept:'application/vnd.github+json', 'Content-Type':'application/json' },
+          body: JSON.stringify({ message:'게시판 업데이트', content, sha })
+        }
+      );
+      if (!putRes.ok) {
+        const err = await putRes.json().catch(()=>({}));
+        throw new Error(putRes.status===401 ? 'NO_TOKEN' : (err.message||'저장 실패'));
+      }
+    }
+
+    // 이미지 업로드
+    async function uploadImgs(files, folder) {
+      const paths = [];
+      for (const f of files) {
+        const dataUrl = await AC.resizeImg ? AC.resizeImg(f) : resizeLocal(f);
+        const base64 = typeof dataUrl === 'string' ? dataUrl.split(',')[1] : dataUrl;
+        const ext = f.type.includes('png') ? 'png' : 'jpg';
+        const name = `${Date.now()}_${Math.random().toString(36).slice(2,6)}.${ext}`;
+        const path = `images/uploads/${folder}/${name}`;
+        const token = getToken();
+        const res = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`,
+          { method:'PUT', headers:{Authorization:`token ${token}`,Accept:'application/vnd.github+json','Content-Type':'application/json'}, body:JSON.stringify({message:'사진 업로드',content:base64}) }
+        );
+        if (!res.ok) throw new Error('이미지 업로드 실패');
+        paths.push(path);
+      }
+      return paths;
+    }
+
+    function resizeLocal(file, maxW=1200) {
+      return new Promise((resolve,reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const scale = Math.min(1, maxW/img.width);
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(img.width*scale);
+            canvas.height = Math.round(img.height*scale);
+            canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+            resolve(canvas.toDataURL('image/jpeg',0.82));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function setStatus(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = 'board-status '+type;
+      el.textContent = msg;
+    }
+
+    // 게시글 렌더링
+    function renderList(tab, posts) {
+      const list = document.getElementById('list-'+tab);
+      const cnt  = document.getElementById('cnt-'+tab);
+      const label = tab==='notice'?'개의 공지':'개의 글';
+      cnt.textContent = (posts?.length||0) + label;
+      if (!posts || !posts.length) {
+        const icons = {free:'💬',suggest:'💡',notice:'📌'};
+        const msgs  = {free:'아직 글이 없어요. 첫 번째 글을 남겨주세요!',suggest:'건의사항이 없어요.',notice:'등록된 공지가 없어요.'};
+        list.innerHTML = `<li class="post-empty"><div class="post-empty__icon">${icons[tab]}</div><p>${msgs[tab]}</p></li>`;
+        return;
+      }
+      const sorted = [...posts].sort((a,b)=>b.date.localeCompare(a.date));
+      const badgeCls = {free:'badge--free',suggest:'badge--suggest',notice:'badge--notice'};
+      const badgeLabel = {free:'자유','suggest':'건의','notice':'📌 공지'};
+      list.innerHTML = sorted.map((p,i)=>{
+        const imgs = p.images||[];
+        return `<li class="post-item">
+          <div class="post-header" onclick="togPost('${tab}',${i})">
+            <span class="post-badge ${badgeCls[tab]}">${badgeLabel[tab]||tab}</span>
+            <span class="post-title">${esc(p.title)}</span>
+            <div class="post-meta">
+              <span>${esc(p.author||'관리자')}</span>
+              <span>${p.date||''}</span>
+            </div>
+          </div>
+          <div class="post-body" id="pbody-${tab}-${i}">
+            <div class="post-body__content">${esc(p.content)}</div>
+            ${imgs.length ? `<div class="post-body__imgs">${imgs.map(path=>`<img class="post-body__img" src="${BASE_URL}/${path}" alt="" onclick="boardOpenImg('${BASE_URL}/${path}')" />`).join('')}</div>` : ''}
+            <div class="post-body__foot">
+              <span class="post-body__date">${p.date||''}</span>
+              <button class="post-del admin-only" onclick="delPost('${tab}','${p.id}')">삭제</button>
+            </div>
+          </div>
+        </li>`;
+      }).join('');
+    }
+
+    window.togPost = function(tab, i) {
+      const el = document.getElementById(`pbody-${tab}-${i}`);
+      el.classList.toggle('open');
+    };
+
+    window.delPost = async function(tab, id) {
+      if (!confirm('삭제할까요?')) return;
+      if (!getToken()) { AC.promptToken(); return; }
+      try {
+        const data = await fetchBoard();
+        data[tab] = (data[tab]||[]).filter(p=>p.id!==id);
+        await saveBoard(data);
+        AC.downloadBackup(data,'게시판');
+        boardData = data;
+        renderList(tab, data[tab]);
+      } catch(e) {
+        alert('삭제 실패: '+e.message);
+        if (e.message==='NO_TOKEN') AC.promptToken();
+      }
+    };
+
+    // 폼 제출 공통
+    async function submitPost(tab, key, fields) {
+      const statusId = key+'-status';
+      const submitBtn = document.querySelector(`#wform-${tab} .wform__submit`);
+      submitBtn.disabled = true;
+      if (!getToken()) {
+        setStatus(statusId,'error','GitHub 토큰을 입력해주세요');
+        AC.promptToken();
+        submitBtn.disabled = false;
+        return;
+      }
+      const files = uploaders[key].files;
+      setStatus(statusId,'loading',files.length?`사진 업로드 중…`:'저장 중…');
+      try {
+        const images = files.length ? await uploadImgs(files,'board') : [];
+        const now = new Date().toISOString().slice(0,10);
+        const post = { id:Date.now().toString(), date:now, images, ...fields };
+        setStatus(statusId,'loading','저장 중…');
+        const data = await fetchBoard();
+        if (!data[tab]) data[tab] = [];
+        data[tab].push(post);
+        await saveBoard(data);
+        AC.downloadBackup(data,'게시판');
+        boardData = data;
+        setStatus(statusId,'success','✅ 등록 완료! 1~2분 후 반영됩니다.');
+        document.getElementById(`wform-${tab}`).reset();
+        uploaders[key].files = [];
+        document.getElementById(`${key}-img-strip`).innerHTML = '';
+        document.getElementById(`wbox-${tab}`).classList.remove('open');
+        renderList(tab, data[tab]);
+      } catch(e) {
+        setStatus(statusId,'error','오류: '+e.message);
+        if (e.message==='NO_TOKEN') AC.promptToken();
+      } finally { submitBtn.disabled = false; }
+    }
+
+    document.getElementById('wform-free').addEventListener('submit', e => {
+      e.preventDefault();
+      submitPost('free','free',{
+        author: document.getElementById('free-author').value.trim(),
+        title: document.getElementById('free-title').value.trim(),
+        content: document.getElementById('free-content').value.trim(),
+      });
+    });
+    document.getElementById('wform-suggest').addEventListener('submit', e => {
+      e.preventDefault();
+      submitPost('suggest','sug',{
+        author: document.getElementById('sug-author').value.trim(),
+        title: document.getElementById('sug-title').value.trim(),
+        content: document.getElementById('sug-content').value.trim(),
+      });
+    });
+    document.getElementById('wform-notice').addEventListener('submit', e => {
+      e.preventDefault();
+      submitPost('notice','not',{
+        author: '관리자',
+        title: document.getElementById('not-title').value.trim(),
+        content: document.getElementById('not-content').value.trim(),
+      });
+    });
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // 초기 로딩
+    async function init() {
+      boardData = await fetchBoard();
+      renderList('free', boardData.free);
+      renderList('suggest', boardData.suggest);
+      renderList('notice', boardData.notice);
+    }
+    init();
+  })();
+  </script>
+</body>
+</html>
