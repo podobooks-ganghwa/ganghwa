@@ -3,16 +3,356 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>책방일지 — 강화포도책방</title>
   <meta name="color-scheme" content="light only" />
-  <meta name="description" content="강화포도책방 책방일지. 책방에서 일어나는 일상과 이야기를 기록합니다." />
+  <title>책방일지 — 강화포도책방</title>
+  <meta name="description" content="강화포도책방의 하루하루를 기록하는 책방일지." />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ── 책방일지 전용 스타일 ── */
+    .journal-hero {
+      background: linear-gradient(135deg, #4a1f61 0%, #6b2d8b 60%, #9b4dca 100%);
+      color: #fff;
+      padding: 140px 0 80px;
+      text-align: center;
+    }
+    .journal-hero__eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 16px;
+    }
+    .journal-hero__title {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .journal-hero__sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* ── 일지 카드 ── */
+    .journal-section {
+      padding: 80px 0 120px;
+      background: #ffffff;
+    }
+    .journal-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .journal-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: #6b7280;
+    }
+    .journal-empty__icon { font-size: 3rem; margin-bottom: 16px; }
+    .journal-empty__text { font-size: 1rem; line-height: 1.8; }
+
+    .journal-card {
+      background: #ffffff;
+      border: 1px solid #e9e0f5;
+      border-radius: 20px;
+      padding: 32px 36px;
+      box-shadow: 0 4px 24px rgba(107,45,139,0.07);
+      transition: box-shadow 0.25s;
+      cursor: pointer;
+      position: relative;
+    }
+    .journal-card:hover {
+      box-shadow: 0 8px 40px rgba(107,45,139,0.14);
+    }
+    .journal-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .journal-card__emoji {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .journal-card__meta { flex: 1; }
+    .journal-card__date {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #9b4dca;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .journal-card__title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #1a1a2e;
+      line-height: 1.4;
+    }
+    .journal-card__content {
+      font-size: 0.95rem;
+      color: #4b5563;
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+    .journal-card__content.collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .journal-card__toggle {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #6b2d8b;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .journal-card__toggle:hover { text-decoration: underline; }
+
+    /* ── 관리자 FAB ── */
+    .admin-fab {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #6b2d8b;
+      color: #fff;
+      font-size: 1.3rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(107,45,139,0.4);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .admin-fab:hover { background: #4a1f61; transform: scale(1.08); }
+
+    /* ── 오버레이 ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26,26,46,0.55);
+      backdrop-filter: blur(4px);
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ── 비밀번호 모달 ── */
+    .pw-modal {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.2);
+    }
+    .pw-modal__icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .pw-modal__title { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; color: #1a1a2e; }
+    .pw-modal__sub { font-size: 0.88rem; color: #6b7280; margin-bottom: 24px; }
+    .pw-modal__input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .pw-modal__input:focus { border-color: #6b2d8b; }
+    .pw-modal__error { font-size: 0.82rem; color: #ef4444; margin-bottom: 8px; display: none; }
+    .pw-modal__btn {
+      width: 100%;
+      padding: 12px;
+      background: #6b2d8b;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .pw-modal__btn:hover { background: #4a1f61; }
+
+    /* ── 관리자 패널 모달 ── */
+    .admin-modal {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.2);
+    }
+    .admin-modal__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px 0;
+    }
+    .admin-modal__title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #1a1a2e;
+    }
+    .admin-modal__close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 4px;
+      line-height: 1;
+    }
+    .admin-modal__body { padding: 20px 28px 28px; }
+
+    .write-form { display: flex; flex-direction: column; gap: 16px; }
+    .write-form__row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; }
+    .write-form label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #6b7280;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .write-form input,
+    .write-form textarea,
+    .write-form select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    .write-form input:focus,
+    .write-form textarea:focus,
+    .write-form select:focus { border-color: #6b2d8b; }
+    .write-form textarea {
+      height: 160px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+    .write-form__submit {
+      padding: 13px;
+      background: #6b2d8b;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .write-form__submit:hover { background: #4a1f61; }
+    .write-form__submit:disabled { background: #c4b5d4; cursor: not-allowed; }
+
+    .admin-divider {
+      border: none;
+      border-top: 1px solid #f0e8ff;
+      margin: 20px 0;
+    }
+    .admin-entry-list { display: flex; flex-direction: column; gap: 10px; }
+    .admin-entry-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: #faf5ff;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+    .admin-entry-item__date { color: #9b4dca; font-weight: 700; white-space: nowrap; }
+    .admin-entry-item__title { flex: 1; color: #1a1a2e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .admin-entry-item__del {
+      background: none;
+      border: 1px solid #fca5a5;
+      color: #ef4444;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .admin-entry-item__del:hover { background: #fee2e2; }
+
+    .save-status {
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 6px;
+      border-radius: 8px;
+      display: none;
+    }
+    .save-status.success { display: block; background: #dcfce7; color: #166534; }
+    .save-status.error   { display: block; background: #fee2e2; color: #991b1b; }
+    .save-status.loading { display: block; background: #f3e8ff; color: #6b2d8b; }
+
+    .emoji-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+    .emoji-picker:focus-within { border-color: #6b2d8b; }
+    .emoji-opt {
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 8px;
+      transition: background 0.15s;
+      border: 2px solid transparent;
+    }
+    .emoji-opt:hover { background: #f3e8ff; }
+    .emoji-opt.selected { border-color: #6b2d8b; background: #f3e8ff; }
+
+    @media (max-width: 600px) {
+      .journal-card { padding: 24px 20px; }
+      .write-form__row { grid-template-columns: 1fr; }
+      .admin-modal { border-radius: 16px 16px 0 0; }
+      .admin-fab { bottom: 24px; right: 20px; }
+    }
+  </style>
 </head>
 <body>
 
+  <!-- 헤더 -->
   <header class="header scrolled" id="header">
     <div class="container header__inner">
       <a href="index.html" class="header__logo">
@@ -36,26 +376,29 @@
     </div>
   </header>
 
-  <section class="page-hero">
-    <div class="container page-hero__inner">
-      <p class="page-hero__eyebrow">Journal</p>
-      <h1 class="page-hero__title">책방일지</h1>
-      <p class="page-hero__desc">강화포도책방의 하루하루, 크고 작은 이야기들을 기록합니다.</p>
+  <!-- 히어로 -->
+  <section class="journal-hero">
+    <div class="container">
+      <p class="journal-hero__eyebrow">Daily Journal</p>
+      <h1 class="journal-hero__title">📖 책방일지</h1>
+      <p class="journal-hero__sub">강화포도책방의 하루하루, 크고 작은 이야기를 기록합니다</p>
     </div>
   </section>
 
-  <section class="section">
+  <!-- 일지 피드 -->
+  <section class="journal-section">
     <div class="container">
-      <div class="coming-soon">
-        <div class="coming-soon__icon">📖</div>
-        <h2 class="coming-soon__title">책방 이야기를 준비하고 있어요</h2>
-        <p class="coming-soon__desc">책방에서 일어나는 일상, 새로운 점주님 소식,<br />계절마다 달라지는 책방 풍경을 곧 전해드릴게요.</p>
-        <a href="index.html" class="btn btn--primary">메인으로 돌아가기</a>
+      <div id="journalFeed" class="journal-feed">
+        <div class="journal-empty">
+          <div class="journal-empty__icon">📝</div>
+          <p class="journal-empty__text">첫 번째 책방일지를 불러오는 중이에요…</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <footer class="footer">
+  <!-- 푸터 -->
+  <footer class="footer footer--deep">
     <div class="footer__bottom">
       <div class="container">
         <p>© 2026 강화포도책방. All rights reserved.</p>
@@ -63,6 +406,341 @@
     </div>
   </footer>
 
+  <!-- 관리자 FAB -->
+  <button class="admin-fab" id="adminFab" title="관리자">✏️</button>
+
+  <!-- 비밀번호 모달 -->
+  <div class="modal-overlay" id="pwOverlay">
+    <div class="pw-modal">
+      <div class="pw-modal__icon">🔐</div>
+      <h2 class="pw-modal__title">관리자 로그인</h2>
+      <p class="pw-modal__sub">책방일지 관리자 비밀번호를 입력하세요</p>
+      <input type="password" class="pw-modal__input" id="pwInput" placeholder="비밀번호" />
+      <p class="pw-modal__error" id="pwError">비밀번호가 맞지 않아요</p>
+      <button class="pw-modal__btn" id="pwBtn">확인</button>
+    </div>
+  </div>
+
+  <!-- 관리자 패널 -->
+  <div class="modal-overlay" id="adminOverlay">
+    <div class="admin-modal">
+      <div class="admin-modal__header">
+        <span class="admin-modal__title">✏️ 책방일지 작성</span>
+        <button class="admin-modal__close" id="adminClose">✕</button>
+      </div>
+      <div class="admin-modal__body">
+        <form class="write-form" id="writeForm">
+          <div class="write-form__row">
+            <div>
+              <label>날짜</label>
+              <input type="date" id="entryDate" required />
+            </div>
+            <div>
+              <label>제목</label>
+              <input type="text" id="entryTitle" placeholder="오늘의 책방 이야기" required maxlength="60" />
+            </div>
+          </div>
+          <div>
+            <label>이모지 선택</label>
+            <div class="emoji-picker" id="emojiPicker">
+              <span class="emoji-opt selected" data-emoji="📖">📖</span>
+              <span class="emoji-opt" data-emoji="📚">📚</span>
+              <span class="emoji-opt" data-emoji="🍇">🍇</span>
+              <span class="emoji-opt" data-emoji="☕">☕</span>
+              <span class="emoji-opt" data-emoji="🌿">🌿</span>
+              <span class="emoji-opt" data-emoji="✏️">✏️</span>
+              <span class="emoji-opt" data-emoji="🎵">🎵</span>
+              <span class="emoji-opt" data-emoji="🌸">🌸</span>
+              <span class="emoji-opt" data-emoji="⛅">⛅</span>
+              <span class="emoji-opt" data-emoji="🌙">🌙</span>
+              <span class="emoji-opt" data-emoji="🤝">🤝</span>
+              <span class="emoji-opt" data-emoji="🎉">🎉</span>
+            </div>
+          </div>
+          <div>
+            <label>내용</label>
+            <textarea id="entryContent" placeholder="오늘 책방에서는…" required></textarea>
+          </div>
+          <div id="saveStatus" class="save-status"></div>
+          <button type="submit" class="write-form__submit" id="submitBtn">일지 올리기 📤</button>
+        </form>
+
+        <hr class="admin-divider" />
+
+        <div>
+          <label style="font-size:0.82rem;font-weight:700;color:#6b7280;display:block;margin-bottom:10px;">등록된 일지 관리</label>
+          <div class="admin-entry-list" id="adminEntryList">
+            <p style="font-size:0.85rem;color:#9ca3af;text-align:center;padding:12px 0">일지를 불러오는 중...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
+  <script>
+  (function () {
+    /* ── 설정 ── */
+    const ADMIN_PW = 'podo2026';   // ← 비밀번호 변경 가능
+    const REPO_OWNER = 'podobooks-ganghwa';
+    const REPO_NAME  = 'ganghwa';
+    const DATA_PATH  = 'data/journal.json';
+
+    /* ── 상태 ── */
+    let isAdmin = false;
+    let selectedEmoji = '📖';
+    let ghToken = sessionStorage.getItem('_jt') || '';
+
+    /* ── 날짜 기본값 ── */
+    document.getElementById('entryDate').value = new Date().toISOString().slice(0,10);
+
+    /* ── 이모지 선택 ── */
+    document.querySelectorAll('.emoji-opt').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedEmoji = el.dataset.emoji;
+      });
+    });
+
+    /* ── GitHub API: journal.json 읽기 ── */
+    async function fetchEntries() {
+      try {
+        const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${DATA_PATH}?t=${Date.now()}`;
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.entries || [];
+      } catch { return []; }
+    }
+
+    /* ── GitHub API: journal.json 쓰기 ── */
+    async function saveEntries(entries) {
+      if (!ghToken) throw new Error('토큰 없음');
+      // 현재 파일의 SHA 가져오기
+      const infoRes = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`,
+        { headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github+json' } }
+      );
+      const info = await infoRes.json();
+      const sha = info.sha;
+
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify({ entries }, null, 2))));
+      const putRes = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${ghToken}`,
+            Accept: 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `책방일지 업데이트 (${new Date().toLocaleDateString('ko-KR')})`,
+            content,
+            sha
+          })
+        }
+      );
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || '저장 실패');
+      }
+    }
+
+    /* ── 일지 렌더링 ── */
+    function renderFeed(entries) {
+      const feed = document.getElementById('journalFeed');
+      if (!entries || entries.length === 0) {
+        feed.innerHTML = `
+          <div class="journal-empty">
+            <div class="journal-empty__icon">📝</div>
+            <p class="journal-empty__text">아직 작성된 일지가 없어요.<br />첫 번째 책방 이야기를 들려주세요!</p>
+          </div>`;
+        return;
+      }
+
+      const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
+      feed.innerHTML = sorted.map((e, i) => {
+        const d = new Date(e.date + 'T00:00:00');
+        const dateFmt = d.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric', weekday:'short' });
+        return `
+          <article class="journal-card" id="card-${i}">
+            <div class="journal-card__header">
+              <div class="journal-card__emoji">${e.emoji || '📖'}</div>
+              <div class="journal-card__meta">
+                <div class="journal-card__date">${dateFmt}</div>
+                <h2 class="journal-card__title">${escHtml(e.title)}</h2>
+              </div>
+            </div>
+            <div class="journal-card__content collapsed" id="content-${i}">${escHtml(e.content)}</div>
+            <button class="journal-card__toggle" onclick="toggleContent(${i})">더 읽기 ▾</button>
+          </article>`;
+      }).join('');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    window.toggleContent = function(i) {
+      const el = document.getElementById(`content-${i}`);
+      const btn = el.nextElementSibling;
+      const collapsed = el.classList.toggle('collapsed');
+      btn.textContent = collapsed ? '더 읽기 ▾' : '접기 ▴';
+    };
+
+    /* ── 관리자 패널 엔트리 목록 렌더링 ── */
+    function renderAdminList(entries) {
+      const list = document.getElementById('adminEntryList');
+      if (!entries || entries.length === 0) {
+        list.innerHTML = '<p style="font-size:0.85rem;color:#9ca3af;text-align:center;padding:12px 0">등록된 일지가 없어요</p>';
+        return;
+      }
+      const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
+      list.innerHTML = sorted.map(e => `
+        <div class="admin-entry-item">
+          <span class="admin-entry-item__date">${e.date}</span>
+          <span class="admin-entry-item__title">${escHtml(e.emoji||'📖')} ${escHtml(e.title)}</span>
+          <button class="admin-entry-item__del" onclick="deleteEntry('${e.id}')">삭제</button>
+        </div>`).join('');
+    }
+
+    /* ── 삭제 ── */
+    window.deleteEntry = async function(id) {
+      if (!confirm('이 일지를 삭제할까요?')) return;
+      setStatus('loading', '삭제 중…');
+      try {
+        const entries = await fetchEntries();
+        const newEntries = entries.filter(e => e.id !== id);
+        await saveEntries(newEntries);
+        setStatus('success', '삭제되었어요! (반영까지 1~2분)');
+        renderFeed(newEntries);
+        renderAdminList(newEntries);
+      } catch(err) {
+        if (String(err.message).includes('토큰')) {
+          promptToken();
+        } else {
+          setStatus('error', '삭제 실패: ' + err.message);
+        }
+      }
+    };
+
+    /* ── 폼 제출 ── */
+    document.getElementById('writeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      setStatus('loading', '저장 중…');
+
+      const newEntry = {
+        id: Date.now().toString(),
+        date: document.getElementById('entryDate').value,
+        emoji: selectedEmoji,
+        title: document.getElementById('entryTitle').value.trim(),
+        content: document.getElementById('entryContent').value.trim(),
+      };
+
+      try {
+        const entries = await fetchEntries();
+        entries.push(newEntry);
+        await saveEntries(entries);
+        setStatus('success', '✅ 일지가 올라갔어요! 1~2분 후 반영됩니다.');
+        document.getElementById('entryTitle').value = '';
+        document.getElementById('entryContent').value = '';
+        document.getElementById('entryDate').value = new Date().toISOString().slice(0,10);
+        renderFeed(entries);
+        renderAdminList(entries);
+      } catch(err) {
+        if (!ghToken || String(err.message).includes('토큰') || String(err.message).includes('401') || String(err.message).includes('Bad credentials')) {
+          setStatus('error', 'GitHub 토큰을 입력해주세요');
+          promptToken();
+        } else {
+          setStatus('error', '저장 실패: ' + err.message);
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    function setStatus(type, msg) {
+      const el = document.getElementById('saveStatus');
+      el.className = 'save-status ' + type;
+      el.textContent = msg;
+    }
+
+    /* ── GitHub 토큰 입력 ── */
+    function promptToken() {
+      const token = prompt(
+        '📌 GitHub Personal Access Token을 입력해주세요.\n\n' +
+        '토큰 발급 방법:\n' +
+        '1. github.com/settings/tokens/new 접속\n' +
+        '2. Note: 책방일지\n' +
+        '3. Expiration: No expiration\n' +
+        '4. Scopes: repo 체크\n' +
+        '5. Generate token 클릭 후 복사'
+      );
+      if (token) {
+        ghToken = token.trim();
+        sessionStorage.setItem('_jt', ghToken);
+      }
+    }
+
+    /* ── 비밀번호 확인 ── */
+    function checkPw() {
+      const val = document.getElementById('pwInput').value;
+      if (val === ADMIN_PW) {
+        document.getElementById('pwOverlay').classList.remove('open');
+        document.getElementById('pwInput').value = '';
+        document.getElementById('pwError').style.display = 'none';
+        openAdmin();
+      } else {
+        document.getElementById('pwError').style.display = 'block';
+        document.getElementById('pwInput').value = '';
+        document.getElementById('pwInput').focus();
+      }
+    }
+
+    document.getElementById('pwBtn').addEventListener('click', checkPw);
+    document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
+
+    /* ── 관리자 열기/닫기 ── */
+    async function openAdmin() {
+      document.getElementById('adminOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      const entries = await fetchEntries();
+      renderAdminList(entries);
+      if (!ghToken) {
+        setTimeout(promptToken, 300);
+      }
+    }
+
+    document.getElementById('adminClose').addEventListener('click', () => {
+      document.getElementById('adminOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    });
+    document.getElementById('adminOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('adminOverlay')) {
+        document.getElementById('adminOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+
+    /* ── FAB 클릭 → 비밀번호 모달 ── */
+    document.getElementById('adminFab').addEventListener('click', () => {
+      document.getElementById('pwOverlay').classList.add('open');
+      document.getElementById('pwInput').focus();
+    });
+    document.getElementById('pwOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('pwOverlay')) {
+        document.getElementById('pwOverlay').classList.remove('open');
+      }
+    });
+
+    /* ── 첫 로딩 ── */
+    fetchEntries().then(entries => renderFeed(entries));
+
+  })();
+  </script>
 </body>
 </html>
