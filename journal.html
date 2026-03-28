@@ -494,7 +494,11 @@
     /* ── 상태 ── */
     let isAdmin = false;
     let selectedEmoji = '📖';
-    let ghToken = localStorage.getItem('_jt') || '';
+    // 토큰은 항상 localStorage에서 동적으로 읽음 (변수 캐싱 금지)
+    function getGhToken() {
+      return localStorage.getItem('_jt') || sessionStorage.getItem('_jt') || '';
+    }
+    let ghToken = getGhToken();
     let imgUploader = null;
 
     /* ── 날짜 기본값 ── */
@@ -525,6 +529,7 @@
 
     /* ── GitHub API: journal.json 쓰기 ── */
     async function saveEntries(entries) {
+      ghToken = getGhToken();
       if (!ghToken) throw new Error('토큰 없음');
       // 현재 파일의 SHA 가져오기
       const infoRes = await fetch(
@@ -707,6 +712,7 @@
       if (token) {
         ghToken = token.trim();
         localStorage.setItem('_jt', ghToken);
+        sessionStorage.removeItem('_jt');
       }
     }
 
@@ -734,6 +740,7 @@
       document.body.style.overflow = 'hidden';
       const entries = await fetchEntries();
       renderAdminList(entries);
+      ghToken = getGhToken();
       if (!ghToken) {
         setTimeout(promptToken, 300);
       }

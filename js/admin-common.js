@@ -49,8 +49,16 @@ window.AC = (function () {
   function esc(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
-  function getToken() { return localStorage.getItem('_jt') || ''; }
-  function setToken(t) { if (t) localStorage.setItem('_jt', t.trim()); }
+  function getToken() {
+    let t = localStorage.getItem('_jt') || '';
+    if (!t) {
+      // sessionStorage → localStorage 자동 이전
+      const ss = sessionStorage.getItem('_jt') || '';
+      if (ss) { localStorage.setItem('_jt', ss); t = ss; }
+    }
+    return t;
+  }
+  function setToken(t) { if (t) { localStorage.setItem('_jt', t.trim()); sessionStorage.removeItem('_jt'); } }
   function checkPw(pw) { return pw === ADMIN_PW; }
 
   /* ── GitHub API ── */
