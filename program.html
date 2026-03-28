@@ -161,6 +161,7 @@
             <div><label>정원</label><input type="text" id="fCapacity" placeholder="10명, 선착순 등" /></div>
           </div>
           <div><label>신청·문의 방법</label><input type="text" id="fContact" placeholder="직접 방문 / 010-xxxx / 인스타 DM" /></div>
+          <div><label>사진 첨부 (여러 장 가능)</label><div id="pgImgUploader"></div></div>
           <div id="pgStatus" class="save-status"></div>
           <button type="submit" class="aform__submit" id="submitBtn">프로그램 등록하기 📤</button>
         </form>
@@ -177,8 +178,10 @@
   (function(){
     const PATH = 'data/programs.json';
     let selEmoji = '🎓';
+    let uploader = null;
 
     document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+    uploader = AC.createUploader('pgImgUploader');
 
     // 이모지 선택
     document.querySelectorAll('.eopt').forEach(el => {
@@ -218,6 +221,7 @@
           </div>
           <div class="prog-card__desc collapsed" id="pdesc-${i}">${AC.esc(p.description)}</div>
           <button class="prog-card__toggle" onclick="togDesc(${i})">더 읽기 ▾</button>
+          ${AC.imgHtml(p.images)}
           <div class="prog-card__footer">
             ${p.fee ? `<span class="prog-card__tag">💰 ${AC.esc(p.fee)}</span>` : ''}
             ${p.capacity ? `<span class="prog-card__tag">👥 ${AC.esc(p.capacity)}</span>` : ''}
@@ -270,26 +274,35 @@
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
       AC.setStatus('pgStatus','loading','저장 중…');
-      const item = {
-        id: Date.now().toString(),
-        emoji: selEmoji,
-        title: document.getElementById('fTitle').value.trim(),
-        date: document.getElementById('fDate').value,
-        time: document.getElementById('fTime').value,
-        place: document.getElementById('fPlace').value.trim(),
-        description: document.getElementById('fDesc').value.trim(),
-        fee: document.getElementById('fFee').value.trim(),
-        capacity: document.getElementById('fCapacity').value.trim(),
-        contact: document.getElementById('fContact').value.trim(),
-        status: document.getElementById('fStatus').value,
-      };
+      const files = uploader ? uploader.getFiles() : [];
       try {
+        let images = [];
+        if (files.length > 0) {
+          AC.setStatus('pgStatus','loading',`사진 업로드 중… (0/${files.length})`);
+          images = await AC.uploadImgs(files, 'programs', msg => AC.setStatus('pgStatus','loading',msg));
+        }
+        const item = {
+          id: Date.now().toString(),
+          emoji: selEmoji,
+          title: document.getElementById('fTitle').value.trim(),
+          date: document.getElementById('fDate').value,
+          time: document.getElementById('fTime').value,
+          place: document.getElementById('fPlace').value.trim(),
+          description: document.getElementById('fDesc').value.trim(),
+          fee: document.getElementById('fFee').value.trim(),
+          capacity: document.getElementById('fCapacity').value.trim(),
+          contact: document.getElementById('fContact').value.trim(),
+          status: document.getElementById('fStatus').value,
+          images,
+        };
+        AC.setStatus('pgStatus','loading','저장 중…');
         const data = await AC.fetchJSON(PATH);
         const items = [...(data.programs||[]), item];
         await AC.saveJSON(PATH,{programs:items},`프로그램 추가: ${item.title}`);
         AC.setStatus('pgStatus','success','✅ 등록 완료! 1~2분 후 반영됩니다.');
         document.getElementById('writeForm').reset();
         document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+        if (uploader) uploader.reset();
         renderFeed(items); renderAdminList(items);
       } catch(e){ handleErr(e,'pgStatus'); }
       finally{ btn.disabled = false; }

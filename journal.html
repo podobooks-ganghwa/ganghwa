@@ -461,6 +461,10 @@
             <label>내용</label>
             <textarea id="entryContent" placeholder="오늘 책방에서는…" required></textarea>
           </div>
+          <div>
+            <label>사진 첨부 (여러 장 가능)</label>
+            <div id="jImgUploader"></div>
+          </div>
           <div id="saveStatus" class="save-status"></div>
           <button type="submit" class="write-form__submit" id="submitBtn">일지 올리기 📤</button>
         </form>
@@ -478,6 +482,7 @@
   </div>
 
   <script src="script.js"></script>
+  <script src="js/admin-common.js"></script>
   <script>
   (function () {
     /* ── 설정 ── */
@@ -490,9 +495,13 @@
     let isAdmin = false;
     let selectedEmoji = '📖';
     let ghToken = sessionStorage.getItem('_jt') || '';
+    let imgUploader = null;
 
     /* ── 날짜 기본값 ── */
     document.getElementById('entryDate').value = new Date().toISOString().slice(0,10);
+
+    /* ── 이미지 업로더 초기화 ── */
+    imgUploader = AC.createUploader('jImgUploader');
 
     /* ── 이모지 선택 ── */
     document.querySelectorAll('.emoji-opt').forEach(el => {
@@ -575,6 +584,7 @@
             </div>
             <div class="journal-card__content collapsed" id="content-${i}">${escHtml(e.content)}</div>
             <button class="journal-card__toggle" onclick="toggleContent(${i})">더 읽기 ▾</button>
+            ${AC.imgHtml(e.images)}
           </article>`;
       }).join('');
     }
@@ -633,15 +643,25 @@
       btn.disabled = true;
       setStatus('loading', '저장 중…');
 
-      const newEntry = {
-        id: Date.now().toString(),
-        date: document.getElementById('entryDate').value,
-        emoji: selectedEmoji,
-        title: document.getElementById('entryTitle').value.trim(),
-        content: document.getElementById('entryContent').value.trim(),
-      };
+      const files = imgUploader ? imgUploader.getFiles() : [];
 
       try {
+        let imagePaths = [];
+        if (files.length > 0) {
+          setStatus('loading', `사진 업로드 중… (0/${files.length})`);
+          imagePaths = await AC.uploadImgs(files, 'journal', msg => setStatus('loading', msg));
+        }
+
+        const newEntry = {
+          id: Date.now().toString(),
+          date: document.getElementById('entryDate').value,
+          emoji: selectedEmoji,
+          title: document.getElementById('entryTitle').value.trim(),
+          content: document.getElementById('entryContent').value.trim(),
+          images: imagePaths,
+        };
+
+        setStatus('loading', '저장 중…');
         const entries = await fetchEntries();
         entries.push(newEntry);
         await saveEntries(entries);
@@ -649,10 +669,11 @@
         document.getElementById('entryTitle').value = '';
         document.getElementById('entryContent').value = '';
         document.getElementById('entryDate').value = new Date().toISOString().slice(0,10);
+        if (imgUploader) imgUploader.reset();
         renderFeed(entries);
         renderAdminList(entries);
       } catch(err) {
-        if (!ghToken || String(err.message).includes('토큰') || String(err.message).includes('401') || String(err.message).includes('Bad credentials')) {
+        if (!ghToken || String(err.message).includes('토큰') || String(err.message).includes('401') || String(err.message).includes('Bad credentials') || err.message === 'NO_TOKEN') {
           setStatus('error', 'GitHub 토큰을 입력해주세요');
           promptToken();
         } else {

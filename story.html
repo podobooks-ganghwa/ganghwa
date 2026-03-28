@@ -137,6 +137,7 @@
           <div><label>이야기 제목 *</label><input type="text" id="fTitle" placeholder="나만의 책방 이야기 제목" required maxlength="50" /></div>
           <div><label>이야기 내용 *</label><textarea id="fContent" placeholder="책방에서의 소소한 일상, 추천 책 이야기, 책방을 시작한 이유… 자유롭게 써주세요 :)" required></textarea></div>
           <div><label>날짜</label><input type="date" id="fDate" /></div>
+          <div><label>사진 첨부 (여러 장 가능)</label><div id="stImgUploader"></div></div>
           <div id="pgStatus" class="save-status"></div>
           <button type="submit" class="aform__submit" id="submitBtn">이야기 등록하기 📤</button>
         </form>
@@ -153,8 +154,10 @@
   (function(){
     const PATH = 'data/stories.json';
     let selEmoji = '✍️';
+    let uploader = null;
 
     document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+    uploader = AC.createUploader('stImgUploader');
 
     document.querySelectorAll('.eopt').forEach(el => {
       el.addEventListener('click', () => {
@@ -190,6 +193,7 @@
           </div>
           <div class="story-card__body collapsed" id="stbody-${i}">${AC.esc(s.content)}</div>
           <button class="story-card__toggle" onclick="togStory(${i})">더 읽기 ▾</button>
+          ${AC.imgHtml(s.images)}
           <div class="story-card__date">${s.date ? AC.fmtDate(s.date) : ''}</div>
         </article>`).join('');
     }
@@ -230,22 +234,31 @@
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
       AC.setStatus('pgStatus','loading','저장 중…');
-      const item = {
-        id: Date.now().toString(),
-        emoji: selEmoji,
-        author: document.getElementById('fAuthor').value.trim(),
-        shelf: document.getElementById('fShelf').value.trim(),
-        title: document.getElementById('fTitle').value.trim(),
-        content: document.getElementById('fContent').value.trim(),
-        date: document.getElementById('fDate').value,
-      };
+      const files = uploader ? uploader.getFiles() : [];
       try {
+        let images = [];
+        if (files.length > 0) {
+          AC.setStatus('pgStatus','loading',`사진 업로드 중… (0/${files.length})`);
+          images = await AC.uploadImgs(files, 'stories', msg => AC.setStatus('pgStatus','loading',msg));
+        }
+        const item = {
+          id: Date.now().toString(),
+          emoji: selEmoji,
+          author: document.getElementById('fAuthor').value.trim(),
+          shelf: document.getElementById('fShelf').value.trim(),
+          title: document.getElementById('fTitle').value.trim(),
+          content: document.getElementById('fContent').value.trim(),
+          date: document.getElementById('fDate').value,
+          images,
+        };
+        AC.setStatus('pgStatus','loading','저장 중…');
         const data = await AC.fetchJSON(PATH);
         const items = [...(data.stories||[]), item];
         await AC.saveJSON(PATH,{stories:items},`이야기 추가: ${item.title}`);
         AC.setStatus('pgStatus','success','✅ 등록 완료! 1~2분 후 반영됩니다.');
         document.getElementById('writeForm').reset();
         document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+        if (uploader) uploader.reset();
         renderFeed(items); renderAdminList(items);
       } catch(e){ handleErr(e,'pgStatus'); }
       finally{ btn.disabled = false; }
