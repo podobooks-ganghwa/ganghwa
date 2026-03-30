@@ -40,6 +40,7 @@
     .aform input:focus,.aform textarea:focus,.aform select:focus{border-color:#7c3aed}
     .aform textarea{height:130px;resize:vertical;line-height:1.7}
     .aform__row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .aform__row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
     .aform__submit{padding:12px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s}
     .aform__submit:hover{background:#6d28d9}
     .aform__submit:disabled{background:#c4b5fd;cursor:not-allowed}
@@ -72,7 +73,7 @@
     .pw-modal__btn:hover{background:#6d28d9}
     .admin-fab{position:fixed;bottom:32px;right:32px;width:52px;height:52px;border-radius:50%;background:#7c3aed;color:#fff;font-size:1.2rem;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(109,40,217,.4);z-index:500;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
     .admin-fab:hover{background:#6d28d9;transform:scale(1.08)}
-    @media(max-width:600px){.pg-grid{grid-template-columns:1fr}.aform__row2{grid-template-columns:1fr}.admin-panel{border-radius:16px 16px 0 0}}
+    @media(max-width:600px){.pg-grid{grid-template-columns:1fr}.aform__row2,.aform__row3{grid-template-columns:1fr}.admin-panel{border-radius:16px 16px 0 0}}
   </style>
 </head>
 <body>
@@ -131,9 +132,10 @@
               <span class="eopt" data-e="🪴">🪴</span><span class="eopt" data-e="🌙">🌙</span><span class="eopt" data-e="💜">💜</span>
             </div>
           </div>
-          <div class="aform__row2">
-            <div><label>점주 이름 *</label><input type="text" id="fAuthor" placeholder="홍길동" required maxlength="20" /></div>
-            <div><label>책장 위치</label><input type="text" id="fShelf" placeholder="예) 3번 작은책장" /></div>
+          <div class="aform__row3">
+            <div><label>입점번호</label><input type="text" id="fNumber" placeholder="예) 001" maxlength="20" /></div>
+            <div><label>책방이름 *</label><input type="text" id="fShopName" placeholder="예) 포도서가" required maxlength="30" /></div>
+            <div><label>입점자 이름 *</label><input type="text" id="fName" placeholder="홍길동" required maxlength="20" /></div>
           </div>
           <div><label>이야기 제목 *</label><input type="text" id="fTitle" placeholder="나만의 책방 이야기 제목" required maxlength="50" /></div>
           <div><label>이야기 내용 *</label><textarea id="fContent" placeholder="책방에서의 소소한 일상, 추천 책 이야기, 책방을 시작한 이유… 자유롭게 써주세요 :)" required></textarea></div>
@@ -184,14 +186,14 @@
       const sorted = [...items].sort((a,b)=>b.date.localeCompare(a.date));
       feed.innerHTML = sorted.map((s,i) => `
         <article class="story-card">
-          <div class="story-card__badge">📚 ${AC.esc(s.shelf||'책방 점주')}</div>
-          <div class="story-card__header">
-            <div class="story-card__emoji">${AC.esc(s.emoji||'✍️')}</div>
-            <div>
-              <div class="story-card__title">${AC.esc(s.title)}</div>
-              <div class="story-card__meta">✍️ ${AC.esc(s.author)}</div>
+          <div class="story-card__badge">📚 ${AC.esc(s.shopName||s.shelf||'포도책방')}</div>
+            <div class="story-card__header">
+              <div class="story-card__emoji">${AC.esc(s.emoji||'✍️')}</div>
+              <div>
+                <div class="story-card__title">${AC.esc(s.title)}</div>
+                <div class="story-card__meta">✍️ ${AC.esc(s.name||s.author||'')}${s.number?` · 입점번호 ${AC.esc(s.number)}`:''}</div>
+              </div>
             </div>
-          </div>
           <div class="story-card__body collapsed" id="stbody-${i}">${AC.esc(s.content)}</div>
           <button class="story-card__toggle" onclick="togStory(${i})">더 읽기 ▾</button>
           ${AC.imgHtml(s.images)}
@@ -213,7 +215,7 @@
       list.innerHTML = sorted.map(s=>`
         <div class="aitem">
           <span class="aitem__date">${s.date}</span>
-          <span class="aitem__title">${AC.esc(s.emoji||'')} ${AC.esc(s.title)} — ${AC.esc(s.author)}</span>
+          <span class="aitem__title">${AC.esc(s.emoji||'')} ${AC.esc(s.title)} — ${AC.esc(s.shopName||s.author||'')} (${AC.esc(s.name||s.author||'')})</span>
           <button class="aitem__del" onclick="delItem('${s.id}')">삭제</button>
         </div>`).join('');
     }
@@ -246,8 +248,9 @@
         const item = {
           id: Date.now().toString(),
           emoji: selEmoji,
-          author: document.getElementById('fAuthor').value.trim(),
-          shelf: document.getElementById('fShelf').value.trim(),
+          number: document.getElementById('fNumber').value.trim(),
+          shopName: document.getElementById('fShopName').value.trim(),
+          name: document.getElementById('fName').value.trim(),
           title: document.getElementById('fTitle').value.trim(),
           content: document.getElementById('fContent').value.trim(),
           date: document.getElementById('fDate').value,

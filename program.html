@@ -19,6 +19,8 @@
     .pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;max-width:960px;margin:0 auto}
     .pg-empty{text-align:center;padding:80px 20px;color:#6b7280;max-width:960px;margin:0 auto}
     .pg-empty__icon{font-size:3rem;margin-bottom:16px}
+    /* 카테고리 */
+    .cat-badge{display:inline-block;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:50px;background:#dbeafe;color:#1d4ed8;letter-spacing:.02em}
     /* 프로그램 카드 */
     .prog-card{background:#fff;border:1px solid #dbeafe;border-radius:20px;padding:24px;box-shadow:0 4px 20px rgba(37,99,235,.07);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .2s}
     .prog-card:hover{box-shadow:0 8px 30px rgba(37,99,235,.14);transform:translateY(-2px)}
@@ -28,7 +30,7 @@
     .prog-card__status--full{background:#fee2e2;color:#b91c1c}
     .prog-card__status--done{background:#f3f4f6;color:#6b7280}
     .prog-card__header{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
-    .prog-card__emoji{font-size:1.8rem;line-height:1}
+    .prog-card__cat{font-size:.8rem;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 10px;border-radius:20px;align-self:flex-start;white-space:nowrap;margin-right:auto}
     .prog-card__title{font-size:1.05rem;font-weight:900;color:#1a1a2e;margin-bottom:3px}
     .prog-card__datetime{font-size:.8rem;color:#2563eb;font-weight:600}
     .prog-card__desc{font-size:.88rem;color:#4b5563;line-height:1.8;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:12px}
@@ -44,19 +46,70 @@
     .detail-hd{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;padding:28px 28px 24px;border-radius:24px 24px 0 0;position:relative}
     .detail-hd__close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
     .detail-hd__status{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:50px;background:rgba(255,255,255,.2);color:#fff;margin-bottom:10px}
-    .detail-hd__emoji{font-size:2.4rem;margin-bottom:8px}
+    .detail-hd__cat{display:inline-block;font-size:.75rem;font-weight:800;padding:3px 12px;border-radius:20px;background:rgba(255,255,255,.25);color:#fff;margin-left:8px;vertical-align:middle}
     .detail-hd__title{font-size:1.4rem;font-weight:900;margin-bottom:6px}
     .detail-hd__meta{font-size:.82rem;opacity:.8;display:flex;flex-wrap:wrap;gap:12px}
-    .detail-body{padding:28px}
-    .detail-info{background:#f0f7ff;border-radius:14px;padding:18px;margin-bottom:24px}
+    .detail-body{padding:0}
+    /* 탭 */
+    .detail-tabs{display:flex;border-bottom:2px solid #e8f0fe;background:#f8faff;padding:0 16px}
+    .detail-tab{padding:12px 16px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;background:none;color:#6b7280;transition:color .15s;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-2px}
+    .detail-tab.active{color:#2563eb;border-bottom-color:#2563eb}
+    .detail-tab:hover:not(.active){color:#374151}
+    .detail-pane{display:none;padding:22px 24px}
+    .detail-pane.active{display:block}
+    .detail-info{background:#f0f7ff;border-radius:14px;padding:18px;margin-bottom:0}
     .detail-info__desc{font-size:.92rem;color:#374151;line-height:1.9;white-space:pre-wrap;margin-bottom:12px}
     .detail-info__tags{display:flex;flex-wrap:wrap;gap:7px}
     .detail-info__tag{font-size:.78rem;background:#dbeafe;color:#1e40af;padding:4px 10px;border-radius:6px;font-weight:600}
     .detail-info__imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:4px;border-radius:8px;overflow:hidden;margin-top:12px}
     .detail-info__img{width:100%;aspect-ratio:1;object-fit:cover;cursor:pointer;transition:opacity .15s}
     .detail-info__img:hover{opacity:.85}
+    /* 신청란 */
+    .apply-box{background:#eff6ff;border-radius:14px;padding:20px;min-height:80px;margin-bottom:14px}
+    .apply-box__content{font-size:.92rem;color:#374151;line-height:1.9;white-space:pre-wrap}
+    .apply-empty{color:#9ca3af;font-size:.88rem}
+    .apply-edit-form{display:none;flex-direction:column;gap:10px;margin-top:10px}
+    .apply-edit-form.open{display:flex}
+    .apply-edit-form textarea{width:100%;padding:10px 14px;border:2px solid #dbeafe;border-radius:10px;font-size:.9rem;font-family:inherit;height:130px;resize:vertical;line-height:1.7;outline:none;box-sizing:border-box}
+    .apply-edit-form textarea:focus{border-color:#2563eb}
+    .apply-edit-btns{display:flex;gap:8px;justify-content:flex-end}
+    .apply-edit-save{padding:8px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
+    .apply-edit-cancel{padding:8px 14px;background:#f3f4f6;color:#6b7280;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit}
+    .apply-edit-trigger{padding:6px 14px;background:#fff;border:1.5px solid #dbeafe;color:#2563eb;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+    .apply-edit-trigger:hover{background:#eff6ff}
+    /* 진행결과 */
+    .result-add-btn{padding:8px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:14px}
+    .result-add-btn:hover{background:#1d4ed8}
+    .result-form{background:#f0f7ff;border-radius:12px;padding:18px;margin-bottom:16px;display:none;flex-direction:column;gap:12px}
+    .result-form.open{display:flex}
+    .result-form label{font-size:.78rem;font-weight:700;color:#6b7280;display:block;margin-bottom:4px}
+    .result-form textarea,.result-form input{width:100%;padding:9px 12px;border:2px solid #dbeafe;border-radius:9px;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s;background:#fff;box-sizing:border-box}
+    .result-form textarea:focus,.result-form input:focus{border-color:#2563eb}
+    .result-form textarea{height:90px;resize:vertical;line-height:1.7}
+    .result-form__btns{display:flex;gap:8px;justify-content:flex-end}
+    .result-form__submit{padding:8px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
+    .result-form__cancel{padding:8px 14px;background:#f3f4f6;color:#6b7280;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit}
+    .result-list{display:flex;flex-direction:column;gap:14px}
+    .result-card{background:#fff;border:1px solid #dbeafe;border-radius:14px;overflow:hidden}
+    .result-card__hd{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;transition:background .15s;background:#f8faff}
+    .result-card__hd:hover{background:#eff6ff}
+    .result-card__date{font-size:.78rem;font-weight:700;color:#2563eb;white-space:nowrap}
+    .result-card__preview{flex:1;font-size:.85rem;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .result-card__body{display:none;padding:16px;border-top:1px solid #dbeafe}
+    .result-card__body.open{display:block}
+    .result-card__content{font-size:.88rem;color:#374151;line-height:1.9;white-space:pre-wrap;margin-bottom:12px}
+    .result-card__imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:4px;border-radius:8px;overflow:hidden;margin-top:8px}
+    .result-card__img{width:100%;aspect-ratio:1;object-fit:cover;cursor:pointer;transition:opacity .15s}
+    .result-card__img:hover{opacity:.85}
+    .result-card__videos{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .result-card__video{width:100%;aspect-ratio:16/9;border:none;border-radius:8px}
+    .result-card__del{font-size:.75rem;color:#ef4444;background:none;border:1px solid #fca5a5;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit;margin-top:8px}
+    .result-empty{text-align:center;padding:28px;color:#9ca3af;font-size:.88rem}
+    .result-status{font-size:.78rem;text-align:center;padding:5px;border-radius:7px;display:none;margin-top:4px}
+    .result-status.loading{display:block;background:#dbeafe;color:#1e40af}
+    .result-status.error{display:block;background:#fee2e2;color:#991b1b}
     /* 하위 게시판 */
-    .subboard{margin-top:4px}
+    .subboard{margin-top:0}
     .subboard__title{font-size:1rem;font-weight:900;color:#1a1a2e;margin-bottom:16px;display:flex;align-items:center;gap:8px}
     .subboard__add-btn{margin-left:auto;padding:6px 14px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit}
     .subboard__add-btn:hover{background:#1d4ed8}
@@ -67,7 +120,6 @@
     .subpost{background:#fff;border:1px solid #dbeafe;border-radius:14px;overflow:hidden}
     .subpost__hd{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;transition:background .15s}
     .subpost__hd:hover{background:#f0f7ff}
-    .subpost__emoji{font-size:1.3rem}
     .subpost__title{flex:1;font-size:.9rem;font-weight:700;color:#1a1a2e}
     .subpost__date{font-size:.74rem;color:#9ca3af;white-space:nowrap}
     .subpost__body{border-top:1px solid #dbeafe;padding:16px;display:none}
@@ -79,7 +131,7 @@
     .subpost__del{font-size:.75rem;color:#ef4444;background:none;border:1px solid #fca5a5;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit;margin-top:8px}
     .subpost-empty{text-align:center;padding:28px;color:#9ca3af;font-size:.88rem}
     /* admin panel */
-    .admin-panel{background:#fff;border-radius:24px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 60px rgba(0,0,0,.2)}
+    .admin-panel{background:#fff;border-radius:24px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 60px rgba(0,0,0,.2)}
     .admin-panel__hd{display:flex;align-items:center;justify-content:space-between;padding:24px 28px 0}
     .admin-panel__title{font-size:1.1rem;font-weight:900;color:#1a1a2e}
     .admin-panel__close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#6b7280;padding:4px;line-height:1}
@@ -98,17 +150,28 @@
     .alist{display:flex;flex-direction:column;gap:8px}
     .aitem{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#eff6ff;border-radius:8px;font-size:.85rem}
     .aitem__date{color:#2563eb;font-weight:700;white-space:nowrap;font-size:.78rem}
+    .aitem__cat{font-size:.72rem;background:#dbeafe;color:#1d4ed8;padding:1px 7px;border-radius:12px;font-weight:700;white-space:nowrap}
     .aitem__title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#1a1a2e}
+    .aitem__edit{background:none;border:1px solid #93c5fd;color:#2563eb;border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer;white-space:nowrap;font-family:inherit}
+    .aitem__edit:hover{background:#eff6ff}
     .aitem__del{background:none;border:1px solid #fca5a5;color:#ef4444;border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer;white-space:nowrap;font-family:inherit}
     .aitem__del:hover{background:#fee2e2}
     .save-status{font-size:.82rem;text-align:center;padding:6px;border-radius:8px;display:none;margin-bottom:4px}
     .save-status.success{display:block;background:#dcfce7;color:#166534}
     .save-status.error{display:block;background:#fee2e2;color:#991b1b}
     .save-status.loading{display:block;background:#dbeafe;color:#1e40af}
-    .emoji-row{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:2px solid #e5e7eb;border-radius:10px}
-    .eopt{font-size:1.2rem;cursor:pointer;padding:4px;border-radius:6px;transition:background .15s;border:2px solid transparent}
-    .eopt:hover{background:#eff6ff}
-    .eopt.sel{border-color:#2563eb;background:#eff6ff}
+    /* 카테고리 관리 */
+    .cat-manage{background:#f0f7ff;border-radius:12px;padding:14px 16px;margin-bottom:14px}
+    .cat-manage__label{font-size:.78rem;font-weight:700;color:#6b7280;margin-bottom:10px;display:block}
+    .cat-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+    .cat-tag{display:flex;align-items:center;gap:4px;font-size:.78rem;font-weight:700;padding:4px 10px;border-radius:20px;background:#dbeafe;color:#1d4ed8}
+    .cat-tag__del{cursor:pointer;font-size:.7rem;opacity:.6;border:none;background:none;color:inherit;padding:0;line-height:1}
+    .cat-tag__del:hover{opacity:1}
+    .cat-add-row{display:flex;gap:8px}
+    .cat-add-input{flex:1;padding:7px 12px;border:1.5px solid #dbeafe;border-radius:8px;font-size:.85rem;font-family:inherit;outline:none;background:#fff}
+    .cat-add-input:focus{border-color:#2563eb}
+    .cat-add-btn{padding:7px 14px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .cat-add-btn:hover{background:#1d4ed8}
     .modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,.55);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
     .modal-overlay.open{opacity:1;pointer-events:auto}
     .pw-modal{background:#fff;border-radius:20px;padding:40px;width:100%;max-width:360px;text-align:center;box-shadow:0 16px 60px rgba(0,0,0,.2)}
@@ -122,7 +185,6 @@
     .pw-modal__btn:hover{background:#1d4ed8}
     .admin-fab{position:fixed;bottom:32px;right:32px;width:52px;height:52px;border-radius:50%;background:#2563eb;color:#fff;font-size:1.2rem;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(37,99,235,.4);z-index:500;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
     .admin-fab:hover{background:#1d4ed8;transform:scale(1.08)}
-    /* 하위 게시판 폼 */
     .sbform{display:flex;flex-direction:column;gap:10px}
     .sbform label{font-size:.78rem;font-weight:700;color:#6b7280;display:block;margin-bottom:3px}
     .sbform input,.sbform textarea{width:100%;padding:9px 12px;border:2px solid #dbeafe;border-radius:9px;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s;background:#fff;box-sizing:border-box}
@@ -134,7 +196,8 @@
     .sb-status{font-size:.78rem;text-align:center;padding:5px;border-radius:7px;display:none}
     .sb-status.loading{display:block;background:#dbeafe;color:#1e40af}
     .sb-status.error{display:block;background:#fee2e2;color:#991b1b}
-    @media(max-width:600px){.pg-grid{grid-template-columns:1fr}.aform__row2,.aform__row3{grid-template-columns:1fr}.admin-panel,.detail-panel{border-radius:16px 16px 0 0}.detail-overlay{align-items:flex-end;padding:0}}
+    .form-mode-badge{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;background:#fef3c7;color:#92400e;margin-bottom:12px}
+    @media(max-width:600px){.pg-grid{grid-template-columns:1fr}.aform__row2,.aform__row3{grid-template-columns:1fr}.admin-panel,.detail-panel{border-radius:16px 16px 0 0}.detail-overlay{align-items:flex-end;padding:0}.detail-tabs{overflow-x:auto}}
   </style>
 </head>
 <body>
@@ -176,55 +239,112 @@
     <div class="footer__bottom"><div class="container"><p>© 2026 강화포도책방. All rights reserved.</p></div></div>
   </footer>
 
-  <!-- 프로그램 상세 모달 (하위 게시판 포함) -->
+  <!-- 프로그램 상세 모달 -->
   <div class="detail-overlay" id="detailOverlay">
     <div class="detail-panel" id="detailPanel">
       <div class="detail-hd" id="detailHd">
         <button class="detail-hd__close" id="detailClose">✕</button>
-        <div class="detail-hd__status" id="detailStatus"></div>
-        <div class="detail-hd__emoji" id="detailEmoji"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="detail-hd__status" id="detailStatus"></div>
+          <span class="detail-hd__cat" id="detailCat"></span>
+        </div>
         <div class="detail-hd__title" id="detailTitle"></div>
         <div class="detail-hd__meta" id="detailMeta"></div>
       </div>
       <div class="detail-body">
-        <div class="detail-info">
-          <div class="detail-info__desc" id="detailDesc"></div>
-          <div class="detail-info__tags" id="detailTags"></div>
-          <div class="detail-info__imgs" id="detailImgs"></div>
+        <!-- 탭 네비게이션 -->
+        <div class="detail-tabs">
+          <button class="detail-tab active" onclick="switchTab('info')">📋 기본 정보</button>
+          <button class="detail-tab" onclick="switchTab('apply')">📝 신청란</button>
+          <button class="detail-tab" onclick="switchTab('result')">📊 진행결과</button>
+          <button class="detail-tab" onclick="switchTab('news')">📢 소식</button>
         </div>
-        <!-- 하위 게시판 -->
-        <div class="subboard">
-          <div class="subboard__title">
-            📋 프로그램 소식
-            <button class="subboard__add-btn" id="sbAddBtn">+ 소식 등록</button>
+
+        <!-- 기본 정보 탭 -->
+        <div class="detail-pane active" id="pane-info">
+          <div class="detail-info">
+            <div class="detail-info__desc" id="detailDesc"></div>
+            <div class="detail-info__tags" id="detailTags"></div>
+            <div class="detail-info__imgs" id="detailImgs"></div>
           </div>
-          <div class="subboard__form" id="sbForm">
-            <form class="sbform" id="sbWriteForm">
-              <div>
-                <label>제목 *</label>
-                <input type="text" id="sbTitle" placeholder="소식 제목을 입력하세요" required maxlength="60" />
-              </div>
-              <div>
-                <label>내용 *</label>
-                <textarea id="sbContent" placeholder="프로그램 후기, 공지, 안내 등을 자유롭게 적어주세요" required></textarea>
-              </div>
-              <div>
-                <label>사진 첨부</label>
-                <div id="sbImgZone" style="border:2px dashed #dbeafe;border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:border-color .2s">
-                  <input type="file" id="sbImgInput" accept="image/*" multiple style="display:none" />
-                  <div style="font-size:.78rem;color:#9ca3af;margin-bottom:8px">사진 선택 또는 드래그</div>
-                  <button type="button" style="padding:4px 12px;background:#f3f4f6;border:1px solid #dbeafe;border-radius:7px;font-size:.76rem;cursor:pointer;font-family:inherit" onclick="document.getElementById('sbImgInput').click()">사진 선택</button>
+        </div>
+
+        <!-- 신청란 탭 -->
+        <div class="detail-pane" id="pane-apply">
+          <div class="apply-box">
+            <div id="applyContent"><span class="apply-empty">신청 안내가 준비 중이에요. 곧 업데이트될 예정입니다.</span></div>
+          </div>
+          <button class="apply-edit-trigger" id="applyEditTrigger" style="display:none">✏️ 신청란 수정</button>
+          <div class="apply-edit-form" id="applyEditForm">
+            <textarea id="applyTextarea" placeholder="신청 방법, 일정, 주의사항 등을 입력하세요" style="height:160px"></textarea>
+            <div class="apply-edit-btns">
+              <button type="button" class="apply-edit-cancel" id="applyCancelBtn">취소</button>
+              <button type="button" class="apply-edit-save" id="applySaveBtn">저장</button>
+            </div>
+            <div class="result-status" id="applyStatus"></div>
+          </div>
+        </div>
+
+        <!-- 진행결과 탭 -->
+        <div class="detail-pane" id="pane-result">
+          <button class="result-add-btn" id="resultAddBtn" style="display:none">+ 진행결과 등록</button>
+          <div class="result-form" id="resultForm">
+            <div>
+              <label>내용 *</label>
+              <textarea id="resultContent" placeholder="진행 내용, 후기, 성과 등을 자유롭게 적어주세요" required></textarea>
+            </div>
+            <div>
+              <label>영상 URL (유튜브/릴스 등, 한 줄에 하나씩)</label>
+              <textarea id="resultVideos" placeholder="https://youtu.be/xxxx&#10;https://www.youtube.com/watch?v=xxxx" style="height:70px"></textarea>
+            </div>
+            <div>
+              <label>사진 첨부 (여러 장 가능)</label>
+              <div id="resultImgUploader"></div>
+            </div>
+            <div class="result-status" id="resultStatus"></div>
+            <div class="result-form__btns">
+              <button type="button" class="result-form__cancel" id="resultCancelBtn">취소</button>
+              <button type="button" class="result-form__submit" id="resultSubmitBtn">등록</button>
+            </div>
+          </div>
+          <div class="result-list" id="resultList"></div>
+        </div>
+
+        <!-- 소식 탭 -->
+        <div class="detail-pane" id="pane-news">
+          <div class="subboard">
+            <div class="subboard__title">
+              📢 프로그램 소식
+              <button class="subboard__add-btn" id="sbAddBtn">+ 소식 등록</button>
+            </div>
+            <div class="subboard__form" id="sbForm">
+              <form class="sbform" id="sbWriteForm">
+                <div>
+                  <label>제목 *</label>
+                  <input type="text" id="sbTitle" placeholder="소식 제목을 입력하세요" required maxlength="60" />
                 </div>
-                <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:7px" id="sbImgStrip"></div>
-              </div>
-              <div class="sb-status" id="sbStatus"></div>
-              <div class="sbform__btns">
-                <button type="button" class="sbform__cancel" id="sbCancelBtn">취소</button>
-                <button type="submit" class="sbform__submit">소식 등록</button>
-              </div>
-            </form>
+                <div>
+                  <label>내용 *</label>
+                  <textarea id="sbContent" placeholder="프로그램 후기, 공지, 안내 등을 자유롭게 적어주세요" required></textarea>
+                </div>
+                <div>
+                  <label>사진 첨부</label>
+                  <div id="sbImgZone" style="border:2px dashed #dbeafe;border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:border-color .2s">
+                    <input type="file" id="sbImgInput" accept="image/*" multiple style="display:none" />
+                    <div style="font-size:.78rem;color:#9ca3af;margin-bottom:8px">사진 선택 또는 드래그</div>
+                    <button type="button" style="padding:4px 12px;background:#f3f4f6;border:1px solid #dbeafe;border-radius:7px;font-size:.76rem;cursor:pointer;font-family:inherit" onclick="document.getElementById('sbImgInput').click()">사진 선택</button>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:7px" id="sbImgStrip"></div>
+                </div>
+                <div class="sb-status" id="sbStatus"></div>
+                <div class="sbform__btns">
+                  <button type="button" class="sbform__cancel" id="sbCancelBtn">취소</button>
+                  <button type="submit" class="sbform__submit">소식 등록</button>
+                </div>
+              </form>
+            </div>
+            <div class="subboard__posts" id="sbPosts"></div>
           </div>
-          <div class="subboard__posts" id="sbPosts"></div>
         </div>
       </div>
     </div>
@@ -238,17 +358,23 @@
         <button class="admin-panel__close" id="adminClose">✕</button>
       </div>
       <div class="admin-panel__body">
-        <form class="aform" id="writeForm">
-          <div>
-            <label>이모지 선택</label>
-            <div class="emoji-row" id="emojiRow">
-              <span class="eopt sel" data-e="🎓">🎓</span><span class="eopt" data-e="📚">📚</span><span class="eopt" data-e="🎤">🎤</span>
-              <span class="eopt" data-e="✏️">✏️</span><span class="eopt" data-e="🎨">🎨</span><span class="eopt" data-e="🎵">🎵</span>
-              <span class="eopt" data-e="🌿">🌿</span><span class="eopt" data-e="☕">☕</span><span class="eopt" data-e="🤝">🤝</span>
-            </div>
+        <!-- 카테고리 관리 -->
+        <div class="cat-manage">
+          <span class="cat-manage__label">카테고리 관리</span>
+          <div class="cat-tags" id="catTagList"></div>
+          <div class="cat-add-row">
+            <input type="text" class="cat-add-input" id="newCatInp" placeholder="새 카테고리 이름 입력" maxlength="20" />
+            <button type="button" class="cat-add-btn" onclick="addCategory()">추가</button>
           </div>
+        </div>
+
+        <div id="formModeBadge" class="form-mode-badge" style="display:none">✏️ 수정 모드</div>
+        <form class="aform" id="writeForm">
           <div class="aform__row2">
-            <div><label>프로그램명 *</label><input type="text" id="fTitle" placeholder="독서모임, 작가강연 등" required maxlength="40" /></div>
+            <div>
+              <label>카테고리 *</label>
+              <select id="fCategory" required></select>
+            </div>
             <div>
               <label>모집 상태</label>
               <select id="fStatus">
@@ -257,6 +383,10 @@
                 <option value="done">⚫ 종료</option>
               </select>
             </div>
+          </div>
+          <div>
+            <label>프로그램명 *</label>
+            <input type="text" id="fTitle" placeholder="독서모임, 작가강연 등" required maxlength="40" />
           </div>
           <div class="aform__row3">
             <div><label>날짜 *</label><input type="date" id="fDate" required /></div>
@@ -271,7 +401,10 @@
           <div><label>신청·문의 방법</label><input type="text" id="fContact" placeholder="직접 방문 / 010-xxxx / 인스타 DM" /></div>
           <div><label>사진 첨부 (여러 장 가능)</label><div id="pgImgUploader"></div></div>
           <div id="pgStatus" class="save-status"></div>
-          <button type="submit" class="aform__submit" id="submitBtn">프로그램 등록하기 📤</button>
+          <div style="display:flex;gap:8px">
+            <button type="button" id="cancelEditBtn" style="display:none;flex:1;padding:12px;background:#f3f4f6;color:#6b7280;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit" onclick="cancelEdit()">취소</button>
+            <button type="submit" class="aform__submit" id="submitBtn" style="flex:2">프로그램 등록하기 📤</button>
+          </div>
         </form>
         <hr class="adivider" />
         <label style="font-size:.8rem;font-weight:700;color:#6b7280;display:block;margin-bottom:10px">등록된 프로그램 관리</label>
@@ -280,44 +413,79 @@
     </div>
   </div>
 
-  <!-- 라이트박스 (admin-common.js에서 추가됨) -->
   <script src="script.js"></script>
   <script src="js/admin-common.js"></script>
   <script>
   (function(){
     const PATH = 'data/programs.json';
     const BASE = 'https://podobooks-ganghwa.github.io/ganghwa';
-    let selEmoji = '🎓';
-    let uploader = null;
+    const DEFAULT_CATS = ['재능나눔','이웃살이','함께보기','신바람 동네책방'];
     let allItems = [];
-    let curDetailId = null; // 현재 열린 프로그램 ID
-
-    // 하위 게시판 이미지 업로더 상태
+    let allCats = [...DEFAULT_CATS];
+    let curDetailId = null;
+    let editId = null; // 수정 중인 프로그램 ID
+    let resultUploader = null;
     let sbFiles = [];
 
     document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
-    uploader = AC.createUploader('pgImgUploader');
-
-    // 이모지 선택
-    document.querySelectorAll('.eopt').forEach(el => {
-      el.addEventListener('click', () => {
-        document.querySelectorAll('.eopt').forEach(e => e.classList.remove('sel'));
-        el.classList.add('sel');
-        selEmoji = el.dataset.e;
-      });
-    });
+    resultUploader = AC.createUploader('resultImgUploader');
+    // pgImgUploader는 writeForm이 열릴 때 생성
+    let pgUploader = AC.createUploader('pgImgUploader');
 
     const statusLabel = { open:'모집중', full:'마감', done:'종료' };
     const statusClass = { open:'open', full:'full', done:'done' };
 
+    // ─── 카테고리 ───
+    function renderCatTags() {
+      const wrap = document.getElementById('catTagList');
+      wrap.innerHTML = allCats.map((c,i) => `
+        <span class="cat-tag">${AC.esc(c)}
+          <button class="cat-tag__del" onclick="removeCategory(${i})" title="삭제">✕</button>
+        </span>`).join('');
+      const sel = document.getElementById('fCategory');
+      const prev = sel.value;
+      sel.innerHTML = allCats.map(c=>`<option value="${AC.esc(c)}">${AC.esc(c)}</option>`).join('');
+      if (allCats.includes(prev)) sel.value = prev;
+    }
+
+    window.addCategory = async function() {
+      const inp = document.getElementById('newCatInp');
+      const name = inp.value.trim();
+      if (!name || allCats.includes(name)) { inp.focus(); return; }
+      allCats = [...allCats, name];
+      inp.value = '';
+      renderCatTags();
+      await saveCats();
+    };
+
+    window.removeCategory = async function(idx) {
+      if (!confirm(`'${allCats[idx]}' 카테고리를 삭제할까요?`)) return;
+      allCats.splice(idx,1);
+      renderCatTags();
+      await saveCats();
+    };
+
+    async function saveCats() {
+      try {
+        const data = await AC.fetchJSON(PATH);
+        data.categories = allCats;
+        await AC.saveJSON(PATH, data, '카테고리 업데이트');
+      } catch(e) { console.warn('카테고리 저장 실패:', e.message); }
+    }
+
+    // ─── 데이터 로드 ───
     async function load() {
       const data = await AC.fetchJSON(PATH);
       allItems = (data && data.programs) || [];
+      if (data && data.categories && data.categories.length) {
+        allCats = data.categories;
+      }
+      renderCatTags();
       renderFeed(allItems);
       return allItems;
     }
 
-    // ── 카드 목록 렌더 ──
+    // ─── 카드 목록 렌더 ───
     function renderFeed(items) {
       const feed = document.getElementById('pgFeed');
       if (!items.length) {
@@ -327,40 +495,51 @@
       const sorted = [...items].sort((a,b) => b.date.localeCompare(a.date));
       feed.innerHTML = sorted.map(p => `
         <article class="prog-card" onclick="openDetail('${p.id}')">
-          <div class="prog-card__status prog-card__status--${statusClass[p.status]||'open'}">${selCircle(p.status)} ${statusLabel[p.status]||'모집중'}</div>
-          <div class="prog-card__header">
-            <div class="prog-card__emoji">${AC.esc(p.emoji||'🎓')}</div>
-            <div>
-              <div class="prog-card__title">${AC.esc(p.title)}</div>
-              <div class="prog-card__datetime">${fmtDateTime(p.date,p.time)}${p.place?' · '+AC.esc(p.place):''}</div>
-            </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <div class="prog-card__status prog-card__status--${statusClass[p.status]||'open'}">${selCircle(p.status)} ${statusLabel[p.status]||'모집중'}</div>
+            <span class="prog-card__cat">${AC.esc(p.category||p.emoji||'기타')}</span>
           </div>
+          <div class="prog-card__title">${AC.esc(p.title)}</div>
+          <div class="prog-card__datetime" style="margin-bottom:10px">${fmtDateTime(p.date,p.time)}${p.place?' · '+AC.esc(p.place):''}</div>
           <div class="prog-card__desc">${AC.esc(p.description)}</div>
           <div class="prog-card__footer">
             ${p.fee?`<span class="prog-card__tag">💰 ${AC.esc(p.fee)}</span>`:''}
             ${p.capacity?`<span class="prog-card__tag">👥 ${AC.esc(p.capacity)}</span>`:''}
           </div>
           <button class="prog-card__detail-btn">자세히 보기 →</button>
-          <div class="prog-card__posts-count">소식 ${(p.posts||[]).length}개</div>
+          <div class="prog-card__posts-count">소식 ${(p.posts||[]).length}개 · 진행결과 ${(p.results||[]).length}건</div>
         </article>`).join('');
     }
 
     function selCircle(s){ return s==='open'?'🟢':s==='full'?'🔴':'⚫'; }
 
     function fmtDateTime(date, time) {
+      if (!date) return '';
       const d = new Date(date+'T00:00:00');
       const ds = d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
       return time ? ds+' '+time : ds;
     }
 
-    // ── 상세 모달 ──
+    // ─── 탭 전환 ───
+    window.switchTab = function(tab) {
+      document.querySelectorAll('.detail-tab').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.detail-pane').forEach(el => el.classList.remove('active'));
+      const tabBtns = document.querySelectorAll('.detail-tab');
+      const tabs = ['info','apply','result','news'];
+      const idx = tabs.indexOf(tab);
+      if (idx >= 0) tabBtns[idx].classList.add('active');
+      const pane = document.getElementById('pane-'+tab);
+      if (pane) pane.classList.add('active');
+    };
+
+    // ─── 상세 모달 ───
     window.openDetail = function(id) {
       const p = allItems.find(x => x.id === id);
       if (!p) return;
       curDetailId = id;
 
       document.getElementById('detailStatus').textContent = `${selCircle(p.status)} ${statusLabel[p.status]||'모집중'}`;
-      document.getElementById('detailEmoji').textContent = p.emoji||'🎓';
+      document.getElementById('detailCat').textContent = p.category || p.emoji || '기타';
       document.getElementById('detailTitle').textContent = p.title;
       document.getElementById('detailMeta').innerHTML = [
         p.date ? `📅 ${fmtDateTime(p.date, p.time)}` : '',
@@ -375,8 +554,26 @@
       const imgs = p.images||[];
       document.getElementById('detailImgs').innerHTML = imgs.map(path=>`<img class="detail-info__img" src="${BASE}/${path}" alt="" onclick="acOpenImg('${BASE}/${path}')" />`).join('');
 
+      // 신청란
+      renderApplyContent(p.application||'');
+
+      // 진행결과
+      renderResults(p.results||[]);
+
+      // 소식
       renderSubPosts(p.posts||[]);
+
+      // 어드민 버튼 표시
+      const hasToken = !!AC.getToken();
+      document.getElementById('applyEditTrigger').style.display = hasToken ? '' : 'none';
+      document.getElementById('resultAddBtn').style.display = hasToken ? '' : 'none';
+      document.getElementById('sbAddBtn').style.display = hasToken ? '' : 'none';
+
+      // 탭 초기화
+      switchTab('info');
       document.getElementById('sbForm').classList.remove('open');
+      document.getElementById('applyEditForm').classList.remove('open');
+      document.getElementById('resultForm').classList.remove('open');
       document.getElementById('detailPanel').scrollTop = 0;
       document.getElementById('detailOverlay').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -390,7 +587,148 @@
       curDetailId = null;
     }
 
-    // ── 하위 게시판 ──
+    // ─── 신청란 ───
+    function renderApplyContent(text) {
+      const box = document.getElementById('applyContent');
+      if (text) {
+        box.innerHTML = `<div class="apply-box__content">${AC.esc(text)}</div>`;
+      } else {
+        box.innerHTML = `<span class="apply-empty">신청 안내가 준비 중이에요. 곧 업데이트될 예정입니다.</span>`;
+      }
+    }
+
+    document.getElementById('applyEditTrigger').addEventListener('click', () => {
+      const p = allItems.find(x=>x.id===curDetailId);
+      document.getElementById('applyTextarea').value = p ? (p.application||'') : '';
+      document.getElementById('applyEditForm').classList.add('open');
+    });
+    document.getElementById('applyCancelBtn').addEventListener('click', () => {
+      document.getElementById('applyEditForm').classList.remove('open');
+    });
+    document.getElementById('applySaveBtn').addEventListener('click', async () => {
+      const text = document.getElementById('applyTextarea').value.trim();
+      const setS = (t,m)=>{ const el=document.getElementById('applyStatus'); el.className='result-status '+t; el.textContent=m; };
+      setS('loading','저장 중…');
+      try {
+        const data = await AC.fetchJSON(PATH);
+        const items = data.programs||[];
+        const prog = items.find(x=>x.id===curDetailId);
+        if (!prog) throw new Error('프로그램을 찾을 수 없어요');
+        prog.application = text;
+        await AC.saveJSON(PATH,{...data,programs:items},'신청란 업데이트');
+        allItems = items;
+        renderApplyContent(text);
+        document.getElementById('applyEditForm').classList.remove('open');
+        setS('loading','');
+      } catch(e) {
+        setS('error','오류: '+e.message);
+        if(e.message==='NO_TOKEN') AC.promptToken();
+      }
+    });
+
+    // ─── 진행결과 ───
+    function renderResults(results) {
+      const list = document.getElementById('resultList');
+      if (!results.length) {
+        list.innerHTML = '<div class="result-empty">아직 등록된 진행결과가 없어요 🌱</div>';
+        return;
+      }
+      const sorted = [...results].sort((a,b)=>b.date.localeCompare(a.date));
+      list.innerHTML = sorted.map((r,i) => {
+        const videoEmbeds = (r.videoUrls||[]).map(url => {
+          const ytId = getYoutubeId(url);
+          if (ytId) return `<iframe class="result-card__video" src="https://www.youtube.com/embed/${ytId}" allowfullscreen></iframe>`;
+          return `<a href="${AC.esc(url)}" target="_blank" style="font-size:.82rem;color:#2563eb;display:block;word-break:break-all">${AC.esc(url)}</a>`;
+        }).join('');
+        return `
+        <div class="result-card">
+          <div class="result-card__hd" onclick="togResult(${i})">
+            <span class="result-card__date">${r.date||''}</span>
+            <span class="result-card__preview">${AC.esc(r.content.slice(0,40))}${r.content.length>40?'…':''}</span>
+            <span style="font-size:.8rem;color:#9ca3af">▼</span>
+          </div>
+          <div class="result-card__body" id="rc-body-${i}">
+            <div class="result-card__content">${AC.esc(r.content)}</div>
+            ${(r.images||[]).length?`<div class="result-card__imgs">${r.images.map(p=>`<img class="result-card__img" src="${BASE}/${p}" alt="" onclick="acOpenImg('${BASE}/${p}')" />`).join('')}</div>`:''}
+            ${videoEmbeds?`<div class="result-card__videos">${videoEmbeds}</div>`:''}
+            <button class="result-card__del" onclick="delResult('${r.id}')">삭제</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.togResult = i => {
+      const el = document.getElementById(`rc-body-${i}`);
+      el.classList.toggle('open');
+    };
+
+    function getYoutubeId(url) {
+      const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+
+    document.getElementById('resultAddBtn').addEventListener('click', () => {
+      document.getElementById('resultForm').classList.add('open');
+    });
+    document.getElementById('resultCancelBtn').addEventListener('click', () => {
+      document.getElementById('resultForm').classList.remove('open');
+    });
+    document.getElementById('resultSubmitBtn').addEventListener('click', async () => {
+      const content = document.getElementById('resultContent').value.trim();
+      if (!content) { alert('내용을 입력해주세요'); return; }
+      const btn = document.getElementById('resultSubmitBtn');
+      btn.disabled = true;
+      const videoRaw = document.getElementById('resultVideos').value.trim();
+      const videoUrls = videoRaw ? videoRaw.split('\n').map(l=>l.trim()).filter(Boolean) : [];
+      const setS = (t,m)=>{ const el=document.getElementById('resultStatus'); el.className='result-status '+t; el.textContent=m; };
+      setS('loading','저장 중…');
+      try {
+        const files = resultUploader ? resultUploader.getFiles() : [];
+        let images = [];
+        if (files.length) {
+          setS('loading','사진 업로드 중…');
+          images = await AC.uploadImgs(files,'programs',msg=>setS('loading',msg));
+        }
+        const data = await AC.fetchJSON(PATH);
+        const items = data.programs||[];
+        const prog = items.find(x=>x.id===curDetailId);
+        if (!prog) throw new Error('프로그램을 찾을 수 없어요');
+        if (!prog.results) prog.results = [];
+        prog.results.push({ id:Date.now().toString(), content, images, videoUrls, date:new Date().toISOString().slice(0,10) });
+        setS('loading','저장 중…');
+        await AC.saveJSON(PATH,{...data,programs:items},'진행결과 추가');
+        AC.downloadBackup({programs:items},'프로그램');
+        allItems = items;
+        document.getElementById('resultContent').value = '';
+        document.getElementById('resultVideos').value = '';
+        if (resultUploader) resultUploader.reset();
+        document.getElementById('resultForm').classList.remove('open');
+        renderResults(prog.results);
+        renderFeed(allItems);
+        setS('loading','');
+      } catch(e) {
+        setS('error','오류: '+e.message);
+        if(e.message==='NO_TOKEN') AC.promptToken();
+      } finally { btn.disabled = false; }
+    });
+
+    window.delResult = async function(rId) {
+      if (!confirm('삭제할까요?')) return;
+      try {
+        const data = await AC.fetchJSON(PATH);
+        const items = data.programs||[];
+        const prog = items.find(x=>x.id===curDetailId);
+        if (!prog) return;
+        prog.results = (prog.results||[]).filter(r=>r.id!==rId);
+        await AC.saveJSON(PATH,{...data,programs:items},'진행결과 삭제');
+        AC.downloadBackup({programs:items},'프로그램');
+        allItems = items;
+        renderResults(prog.results);
+        renderFeed(allItems);
+      } catch(e) { alert('오류: '+e.message); }
+    };
+
+    // ─── 하위 게시판 (소식) ───
     function renderSubPosts(posts) {
       const container = document.getElementById('sbPosts');
       if (!posts.length) {
@@ -401,7 +739,6 @@
       container.innerHTML = sorted.map((post,i) => `
         <div class="subpost">
           <div class="subpost__hd" onclick="togSub(${i})">
-            <span class="subpost__emoji">${AC.esc(post.emoji||'📋')}</span>
             <span class="subpost__title">${AC.esc(post.title)}</span>
             <span class="subpost__date">${post.date||''}</span>
           </div>
@@ -413,12 +750,8 @@
         </div>`).join('');
     }
 
-    window.togSub = function(i) {
-      const el = document.getElementById(`sb-body-${i}`);
-      el.classList.toggle('open');
-    };
+    window.togSub = i => { document.getElementById(`sb-body-${i}`).classList.toggle('open'); };
 
-    // 하위 게시판 이미지 업로더 설정
     const sbInput = document.getElementById('sbImgInput');
     const sbZone  = document.getElementById('sbImgZone');
     const sbStrip = document.getElementById('sbImgStrip');
@@ -434,7 +767,6 @@
     sbZone.addEventListener('dragleave', ()=>{sbZone.style.borderColor='#dbeafe';});
     sbZone.addEventListener('drop', e=>{e.preventDefault();sbZone.style.borderColor='#dbeafe';sbFiles=[...sbFiles,...Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))];refreshSbStrip();});
 
-    // 하위 게시판 소식 등록 버튼
     document.getElementById('sbAddBtn').addEventListener('click', () => {
       if (!AC.getToken()) { AC.promptToken(); return; }
       document.getElementById('sbForm').classList.add('open');
@@ -443,7 +775,6 @@
       document.getElementById('sbForm').classList.remove('open');
     });
 
-    // 하위 게시판 폼 제출
     document.getElementById('sbWriteForm').addEventListener('submit', async e => {
       e.preventDefault();
       const btn = e.target.querySelector('.sbform__submit');
@@ -452,14 +783,7 @@
       setS('loading', sbFiles.length?'사진 업로드 중…':'저장 중…');
       try {
         const images = sbFiles.length ? await AC.uploadImgs(sbFiles,'programs',msg=>setS('loading',msg)) : [];
-        const post = {
-          id: Date.now().toString(),
-          emoji: '📋',
-          title: document.getElementById('sbTitle').value.trim(),
-          content: document.getElementById('sbContent').value.trim(),
-          date: new Date().toISOString().slice(0,10),
-          images,
-        };
+        const post = { id:Date.now().toString(), title:document.getElementById('sbTitle').value.trim(), content:document.getElementById('sbContent').value.trim(), date:new Date().toISOString().slice(0,10), images };
         setS('loading','저장 중…');
         const data = await AC.fetchJSON(PATH);
         const items = data.programs||[];
@@ -467,7 +791,7 @@
         if (!prog) throw new Error('프로그램을 찾을 수 없어요');
         if (!prog.posts) prog.posts = [];
         prog.posts.push(post);
-        await AC.saveJSON(PATH,{programs:items},`프로그램 소식 추가`);
+        await AC.saveJSON(PATH,{...data,programs:items},`프로그램 소식 추가`);
         AC.downloadBackup({programs:items},'프로그램');
         allItems = items;
         setS('loading','');
@@ -490,14 +814,14 @@
       const prog = items.find(x=>x.id===curDetailId);
       if (!prog) return;
       prog.posts = (prog.posts||[]).filter(p=>p.id!==postId);
-      await AC.saveJSON(PATH,{programs:items},`프로그램 소식 삭제`);
+      await AC.saveJSON(PATH,{...data,programs:items},`프로그램 소식 삭제`);
       AC.downloadBackup({programs:items},'프로그램');
       allItems = items;
       renderSubPosts(prog.posts);
       renderFeed(allItems);
     };
 
-    // ── 관리자 패널 목록 ──
+    // ─── 관리자 패널 목록 ───
     function renderAdminList(items) {
       const list = document.getElementById('adminList');
       if (!items.length) { list.innerHTML = '<p style="font-size:.82rem;color:#9ca3af;text-align:center;padding:10px">등록된 프로그램이 없어요</p>'; return; }
@@ -505,10 +829,46 @@
       list.innerHTML = sorted.map(p=>`
         <div class="aitem">
           <span class="aitem__date">${p.date}</span>
-          <span class="aitem__title">${AC.esc(p.emoji||'')} ${AC.esc(p.title)}</span>
+          <span class="aitem__cat">${AC.esc(p.category||p.emoji||'기타')}</span>
+          <span class="aitem__title">${AC.esc(p.title)}</span>
+          <button class="aitem__edit" onclick="startEdit('${p.id}')">편집</button>
           <button class="aitem__del" onclick="delItem('${p.id}')">삭제</button>
         </div>`).join('');
     }
+
+    // ─── 수정 모드 ───
+    window.startEdit = function(id) {
+      const p = allItems.find(x=>x.id===id);
+      if (!p) return;
+      editId = id;
+      // 폼 채우기
+      document.getElementById('fCategory').value = p.category || p.emoji || allCats[0];
+      document.getElementById('fTitle').value = p.title || '';
+      document.getElementById('fStatus').value = p.status || 'open';
+      document.getElementById('fDate').value = p.date || '';
+      document.getElementById('fTime').value = p.time || '';
+      document.getElementById('fPlace').value = p.place || '';
+      document.getElementById('fDesc').value = p.description || '';
+      document.getElementById('fFee').value = p.fee || '';
+      document.getElementById('fCapacity').value = p.capacity || '';
+      document.getElementById('fContact').value = p.contact || '';
+      document.getElementById('submitBtn').textContent = '수정 완료 ✅';
+      document.getElementById('cancelEditBtn').style.display = '';
+      document.getElementById('formModeBadge').style.display = '';
+      // 폼으로 스크롤
+      document.querySelector('.admin-panel').scrollTop = 0;
+    };
+
+    function cancelEdit() {
+      editId = null;
+      document.getElementById('writeForm').reset();
+      document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+      if (pgUploader) pgUploader.reset();
+      document.getElementById('submitBtn').textContent = '프로그램 등록하기 📤';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      document.getElementById('formModeBadge').style.display = 'none';
+    }
+    window.cancelEdit = cancelEdit;
 
     window.delItem = async function(id){
       if(!confirm('삭제할까요?')) return;
@@ -516,29 +876,29 @@
       try {
         const data = await AC.fetchJSON(PATH);
         const items = (data.programs||[]).filter(p=>p.id!==id);
-        await AC.saveJSON(PATH,{programs:items},`프로그램 삭제`);
+        await AC.saveJSON(PATH,{...data,programs:items},`프로그램 삭제`);
         AC.setStatus('pgStatus','success','삭제 완료!');
         AC.downloadBackup({programs:items},'프로그램');
         allItems = items;
         renderFeed(items); renderAdminList(items);
+        if (editId===id) cancelEdit();
       } catch(e){ handleErr(e,'pgStatus'); }
     };
 
-    // ── 프로그램 등록 폼 ──
+    // ─── 등록/수정 폼 ───
     document.getElementById('writeForm').addEventListener('submit', async e=>{
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
-      const files = uploader ? uploader.getFiles() : [];
+      const files = pgUploader ? pgUploader.getFiles() : [];
       try {
         let images = [];
         if (files.length > 0) {
           AC.setStatus('pgStatus','loading',`사진 업로드 중…`);
           images = await AC.uploadImgs(files,'programs',msg=>AC.setStatus('pgStatus','loading',msg));
         }
-        const item = {
-          id: Date.now().toString(),
-          emoji: selEmoji,
+        const newItem = {
+          category: document.getElementById('fCategory').value,
           title: document.getElementById('fTitle').value.trim(),
           date: document.getElementById('fDate').value,
           time: document.getElementById('fTime').value,
@@ -548,21 +908,33 @@
           capacity: document.getElementById('fCapacity').value.trim(),
           contact: document.getElementById('fContact').value.trim(),
           status: document.getElementById('fStatus').value,
-          images,
-          posts: [],
         };
         AC.setStatus('pgStatus','loading','저장 중…');
         const data = await AC.fetchJSON(PATH);
-        const items = [...(data.programs||[]), item];
-        await AC.saveJSON(PATH,{programs:items},`프로그램 추가: ${item.title}`);
-        AC.setStatus('pgStatus','success','✅ 등록 완료! 백업 저장 중…');
+        let items = data.programs||[];
+
+        if (editId) {
+          // 수정
+          const idx = items.findIndex(x=>x.id===editId);
+          if (idx>=0) {
+            const old = items[idx];
+            items[idx] = { ...old, ...newItem, images: images.length ? images : (old.images||[]) };
+          }
+          await AC.saveJSON(PATH,{...data,programs:items},`프로그램 수정: ${newItem.title}`);
+          AC.setStatus('pgStatus','success','✅ 수정 완료!');
+        } else {
+          // 신규
+          const item = { id:Date.now().toString(), ...newItem, images, posts:[], results:[], application:'' };
+          items = [...items, item];
+          await AC.saveJSON(PATH,{...data,programs:items},`프로그램 추가: ${newItem.title}`);
+          AC.setStatus('pgStatus','success','✅ 등록 완료!');
+        }
+
         AC.downloadBackup({programs:items},'프로그램');
-        document.getElementById('writeForm').reset();
-        document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
-        if (uploader) uploader.reset();
+        cancelEdit();
         allItems = items;
         renderFeed(items); renderAdminList(items);
-        setTimeout(()=>AC.setStatus('pgStatus','success','✅ 등록 완료! 1~2분 후 반영됩니다.'),800);
+        setTimeout(()=>AC.setStatus('pgStatus','success','✅ 완료! 1~2분 후 반영됩니다.'),800);
       } catch(e){ handleErr(e,'pgStatus'); }
       finally{ btn.disabled = false; }
     });
@@ -580,7 +952,9 @@
       document.getElementById('adminOverlay').classList.add('open');
       document.body.style.overflow='hidden';
       const data = await AC.fetchJSON(PATH);
-      renderAdminList((data&&data.programs)||[]);
+      const items = (data&&data.programs)||[];
+      if (data&&data.categories) { allCats=data.categories; renderCatTags(); }
+      renderAdminList(items);
     }
 
     document.getElementById('adminClose').addEventListener('click',()=>{

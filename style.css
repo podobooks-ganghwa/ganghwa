@@ -754,6 +754,9 @@ ul {
 .official-ch--threads {
   background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 100%);
 }
+.official-ch--instagram {
+  background: linear-gradient(135deg, #5851db 0%, #833ab4 35%, #c13584 65%, #f77737 100%);
+}
 .official-ch--daangn {
   background: linear-gradient(135deg, #c03a00 0%, #ff6b1a 100%);
 }
@@ -804,6 +807,38 @@ ul {
 }
 .official-ch:hover .official-ch__cta {
   background: rgba(255,255,255,.32);
+}
+/* 참조 채널 */
+.ref-channels {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #f9f5ff;
+  border-radius: 12px;
+  border: 1px solid #ede9fe;
+}
+.ref-channels__label {
+  font-size: .7rem;
+  font-weight: 800;
+  color: #7c3aed;
+  background: #ede9fe;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ref-ch {
+  font-size: .78rem;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color .15s;
+}
+.ref-ch:hover {
+  color: #4f46e5;
 }
 @media (max-width: 480px) {
   .official-channels { grid-template-columns: 1fr; }
@@ -984,6 +1019,12 @@ ul {
   font-size: 2.4rem;
   margin-bottom: 12px;
 }
+.pricing-contact__logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
 .pricing-contact__title {
   font-size: 1.5rem;
   font-weight: 900;
@@ -1032,6 +1073,60 @@ ul {
 .pricing-contact__note {
   font-size: .8rem;
   color: rgba(255,255,255,.5);
+}
+
+/* 입점비용 표 */
+.pricing-table-wrap {
+  overflow-x: auto;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(107,33,168,.12);
+  margin-bottom: 0;
+}
+.pricing-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+.pricing-table thead tr {
+  background: linear-gradient(90deg, #4a1942 0%, #7c3aed 100%);
+  color: #fff;
+}
+.pricing-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.pricing-table th:first-child { border-radius: 18px 0 0 0; }
+.pricing-table th:last-child  { border-radius: 0 18px 0 0; }
+.pricing-table td {
+  padding: 14px 20px;
+  font-size: .88rem;
+  border-bottom: 1px solid #f3e8ff;
+  vertical-align: middle;
+  color: #374151;
+  line-height: 1.6;
+  background: #ffffff;
+}
+.pricing-table tbody tr:last-child td { border-bottom: none; }
+.pricing-table tbody tr:nth-child(even) td { background: #fdf8ff; }
+.pricing-table tbody tr:last-child td:first-child { border-radius: 0 0 0 18px; }
+.pricing-table tbody tr:last-child td:last-child  { border-radius: 0 0 18px 0; }
+.pt-name {
+  font-weight: 800;
+  color: #6b21a8;
+  white-space: nowrap;
+}
+.pt-price { font-size: .85rem; }
+.pt-price strong { color: #7c3aed; font-size: .98rem; }
+.pt-feat { font-size: .78rem; color: #6b7280; }
+.pt-settle {
+  color: #9333ea;
+  font-weight: 700;
+  white-space: nowrap;
+  font-size: .82rem;
 }
 
 .pricing-card__badge {
@@ -1236,6 +1331,22 @@ ul {
 .big-quote footer {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;
+}
+
+.quote-mascot {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.quote-mascot__img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  animation: mascotBounce 2.4s ease-in-out infinite;
+}
+@keyframes mascotBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
 }
 
 /* ===================================
