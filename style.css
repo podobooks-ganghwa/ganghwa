@@ -1338,15 +1338,40 @@ ul {
   margin-bottom: 24px;
 }
 .quote-mascot__img {
-  width: 88px;
-  height: 88px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
-  filter: brightness(0) invert(1);
-  animation: mascotBounce 2.4s ease-in-out infinite;
+  animation: mascotBounce 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 4px 16px rgba(255,255,255,.25));
 }
 @keyframes mascotBounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-10px) rotate(3deg); }
+}
+
+/* 소식 섹션 마스코트 */
+.news-mascot-row {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.news-mascot-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  opacity: .9;
+}
+
+/* 푸터 마스코트 */
+.footer__mascot {
+  margin-top: 16px;
+}
+.footer__mascot-img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  opacity: .85;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.3));
 }
 
 /* ===================================
