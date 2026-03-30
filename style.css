@@ -489,6 +489,16 @@ ul {
   margin-bottom: 64px;
 }
 
+.section__title-icon {
+  display: inline-block;
+  width: 44px;
+  height: auto;
+  margin: 6px auto 10px;
+  opacity: 0.95;
+  user-select: none;
+  pointer-events: none;
+}
+
 .section__header--light .section__eyebrow,
 .section__header--light .section__title,
 .section__header--light .section__sub {
@@ -1090,6 +1100,20 @@ ul {
   font-size: 2.4rem;
   margin-bottom: 12px;
 }
+.pricing-grapes {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 10px;
+}
+
+.pricing-grapes__img {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.10));
+  opacity: 0.95;
+  user-select: none;
+  pointer-events: none;
+}
 .pricing-contact__logo {
   width: 64px;
   height: 64px;
@@ -1317,11 +1341,13 @@ ul {
   border-radius: var(--radius);
   overflow: hidden;
   background: #ffffff;
-  transition: box-shadow var(--transition);
+  transition: box-shadow var(--transition), transform var(--transition);
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.06);
 }
 
 .faq-item:hover {
-  box-shadow: var(--shadow);
+  box-shadow: 0 16px 40px rgba(17, 24, 39, 0.10);
+  transform: translateY(-1px);
 }
 
 .faq-item__question {
@@ -1414,6 +1440,9 @@ ul {
   object-fit: contain;
   animation: mascotBounce 1.8s ease-in-out infinite;
   filter: drop-shadow(0 4px 16px rgba(255,255,255,.25));
+}
+.quote-mascot__img--static {
+  animation: none !important;
 }
 @keyframes mascotBounce {
   0%, 100% { transform: translateY(0) rotate(-3deg); }
