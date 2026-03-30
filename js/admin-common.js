@@ -123,8 +123,8 @@ window.AC = (function () {
     if (!token) throw new Error('NO_TOKEN');
     const dataUrl = await resizeImg(file);
     const base64  = dataUrl.split(',')[1];
-    const ext  = file.type.includes('png') ? 'png' : 'jpg';
-    const name = `${Date.now()}_${Math.random().toString(36).slice(2,6)}.${ext}`;
+    // resizeImg는 항상 JPEG 데이터를 반환하므로 확장자도 jpg로 고정
+    const name = `${Date.now()}_${Math.random().toString(36).slice(2,6)}.jpg`;
     const path = `images/uploads/${folder}/${name}`;
     const res = await fetch(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`,
