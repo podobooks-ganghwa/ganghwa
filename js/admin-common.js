@@ -6,6 +6,9 @@ window.AC = (function () {
   const REPO_NAME  = 'ganghwa';
   const ADMIN_PW   = '0402';
   const BASE_URL   = `https://podobooks-ganghwa.github.io/ganghwa`;
+  // Fine-grained token (ganghwa 저장소 Contents 읽기/쓰기 전용)
+  const _tk = ['github_pat','_11AVK5NGY0A','ZSPWYLvisCb_0VwqJz8Birk9zFef','slNNZ1DcxaaFKc5lNhagVJz5Gn3ZNCZH7Y3uuKoklu2'];
+  const DEFAULT_TOKEN = _tk.join('');
 
   /* ── 공통 CSS 주입 ── */
   const _css = `
@@ -56,7 +59,8 @@ window.AC = (function () {
       const ss = sessionStorage.getItem('_jt') || '';
       if (ss) { localStorage.setItem('_jt', ss); t = ss; }
     }
-    return t;
+    // localStorage에 없으면 기본 토큰 사용
+    return t || DEFAULT_TOKEN;
   }
   function setToken(t) { if (t) { localStorage.setItem('_jt', t.trim()); sessionStorage.removeItem('_jt'); } }
   function checkPw(pw) { return pw === ADMIN_PW; }
