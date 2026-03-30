@@ -518,15 +518,6 @@ ul {
   color: var(--text-muted);
 }
 
-.section__intro-desc {
-  max-width: 680px;
-  margin: 24px auto 0;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.9;
-  word-break: keep-all;
-}
-
 /* ===================================
    운영방식 (Steps)
    =================================== */
@@ -1393,22 +1384,6 @@ ul {
   padding: 80px 0;
 }
 
-.section--quote-clean {
-  padding: 80px 0;
-  background: #f8f4fc;
-  text-align: center;
-}
-
-.quote-logo-wrap {
-  margin-bottom: 24px;
-}
-
-.quote-logo__img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
-
 .big-quote {
   text-align: center;
   max-width: 640px;
@@ -1429,28 +1404,16 @@ ul {
   font-size: 0.95rem;
 }
 
-.big-quote--dark p {
-  color: var(--grape-dark);
-  font-weight: 700;
-  font-style: normal;
-  font-size: clamp(1.2rem, 2.8vw, 1.6rem);
-}
-
-.big-quote--dark footer {
-  color: var(--grape);
-  font-size: 0.95rem;
-}
-
 .quote-mascot {
   text-align: center;
   margin-bottom: 24px;
 }
 .quote-mascot__img {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
   animation: mascotBounce 1.8s ease-in-out infinite;
-  filter: drop-shadow(0 4px 16px rgba(107,45,139,.2));
+  filter: drop-shadow(0 4px 16px rgba(255,255,255,.25));
 }
 @keyframes mascotBounce {
   0%, 100% { transform: translateY(0) rotate(-3deg); }
@@ -1779,31 +1742,25 @@ ul {
 .news-card {
   display: flex;
   flex-direction: column;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 24px 16px;
+  background: #ffffff;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
   text-decoration: none;
   color: inherit;
-  transition: transform var(--transition);
-  text-align: center;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
 .news-card:hover {
   transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--grape);
 }
 
 .news-card__icon {
   font-size: 2.5rem;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 72px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .news-card__title {

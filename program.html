@@ -39,18 +39,6 @@
     .prog-card__detail-btn{width:100%;padding:9px;background:#eff6ff;color:#1d4ed8;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s;margin-top:4px}
     .prog-card__detail-btn:hover{background:#dbeafe}
     .prog-card__posts-count{font-size:.75rem;color:#6b7280;text-align:right;margin-top:6px}
-    /* 활동 이야기 */
-    .pg-activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;max-width:960px;margin:0 auto}
-    .activity-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(107,45,139,.08);cursor:pointer;transition:transform .2s,box-shadow .2s}
-    .activity-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(107,45,139,.16)}
-    .activity-card__thumb{height:180px;overflow:hidden}
-    .activity-card__thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-    .activity-card:hover .activity-card__thumb img{transform:scale(1.04)}
-    .activity-card__body{padding:18px 20px}
-    .activity-card__prog{font-size:.75rem;font-weight:800;color:var(--grape);background:#f3e8ff;padding:2px 10px;border-radius:20px;display:inline-block;margin-bottom:10px}
-    .activity-card__text{font-size:.9rem;color:#374151;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
-    .activity-card__video{font-size:.8rem;color:#2563eb;font-weight:700;text-decoration:none}
-    .activity-card__date{font-size:.78rem;color:#9ca3af;display:block;margin-top:8px}
     /* 상세 모달 */
     .detail-overlay{position:fixed;inset:0;background:rgba(26,26,46,.55);backdrop-filter:blur(4px);z-index:700;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
     .detail-overlay.open{opacity:1;pointer-events:auto}
@@ -244,20 +232,6 @@
   <section class="pg-section">
     <div class="container">
       <div id="pgFeed" class="pg-grid"><div class="pg-empty"><div class="pg-empty__icon">🎓</div><p>프로그램을 불러오는 중이에요…</p></div></div>
-    </div>
-  </section>
-
-  <!-- 프로그램 활동 이야기 -->
-  <section class="pg-section pg-section--story" style="background:#f8f4fc;">
-    <div class="container">
-      <div class="section__header">
-        <p class="section__eyebrow">Activity Stories</p>
-        <h2 class="section__title" style="color:var(--grape-dark);">프로그램 활동 이야기</h2>
-        <p class="section__sub">강화포도책방 프로그램에서 나눈 이야기와 순간들을 기록합니다</p>
-      </div>
-      <div id="activityFeed" class="pg-activity-grid">
-        <div class="pg-empty"><div class="pg-empty__icon">📸</div><p>활동 이야기를 불러오는 중이에요…</p></div>
-      </div>
     </div>
   </section>
 
@@ -508,36 +482,7 @@
       }
       renderCatTags();
       renderFeed(allItems);
-      renderActivityStories(allItems);
       return allItems;
-    }
-
-    // ─── 프로그램 활동 이야기 렌더 ───
-    function renderActivityStories(items) {
-      const feed = document.getElementById('activityFeed');
-      if (!feed) return;
-      // 진행결과(results)가 있는 프로그램의 결과물 모아서 최신순으로 표시
-      const stories = [];
-      items.forEach(prog => {
-        (prog.results || []).forEach(r => {
-          stories.push({ ...r, progTitle: prog.title, progId: prog.id });
-        });
-      });
-      stories.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-      if (!stories.length) {
-        feed.innerHTML = `<div class="pg-empty"><div class="pg-empty__icon">📸</div><p>프로그램 활동 결과를 기다리는 중이에요.<br/>진행된 프로그램의 이야기가 여기에 담깁니다!</p></div>`;
-        return;
-      }
-      feed.innerHTML = stories.slice(0, 12).map(r => `
-        <article class="activity-card" onclick="openDetail('${r.progId}')">
-          ${r.images && r.images.length ? `<div class="activity-card__thumb"><img src="${r.images[0]}" alt="" loading="lazy" /></div>` : ''}
-          <div class="activity-card__body">
-            <span class="activity-card__prog">${AC.esc(r.progTitle)}</span>
-            <p class="activity-card__text">${AC.esc(r.text || '')}</p>
-            ${r.videoUrl ? `<a class="activity-card__video" href="${AC.esc(r.videoUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">▶ 영상 보기</a>` : ''}
-            <span class="activity-card__date">${AC.fmtDate(r.createdAt || '')}</span>
-          </div>
-        </article>`).join('');
     }
 
     // ─── 카드 목록 렌더 ───
