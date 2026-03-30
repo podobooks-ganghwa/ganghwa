@@ -558,7 +558,9 @@
         }
       );
       if (!putRes.ok) {
-        const err = await putRes.json();
+        const err = await putRes.json().catch(() => ({}));
+        // 401(인증실패) 또는 404(권한없음) 모두 토큰 문제로 처리
+        if (putRes.status === 401 || putRes.status === 404) throw new Error('NO_TOKEN');
         throw new Error(err.message || '저장 실패');
       }
     }

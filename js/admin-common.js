@@ -89,7 +89,9 @@ window.AC = (function () {
     );
     if (!putRes.ok) {
       const err = await putRes.json().catch(() => ({}));
-      throw new Error(putRes.status === 401 ? 'NO_TOKEN' : (err.message || '저장 실패'));
+      // 401(인증실패) 또는 404(권한없음 - GitHub는 공개저장소 쓰기 권한 없을때 404 반환) 모두 토큰 문제
+      if (putRes.status === 401 || putRes.status === 404) throw new Error('NO_TOKEN');
+      throw new Error(err.message || '저장 실패');
     }
   }
 
@@ -227,6 +229,8 @@ window.AC = (function () {
       #acTokenSave:hover{background:#6d28d9}
       #acTokenSkip{padding:11px 16px;background:#f3f4f6;color:#6b7280;border:none;border-radius:10px;font-size:.88rem;cursor:pointer;font-family:inherit}
       #acTokenSkip:hover{background:#e5e7eb}
+      .admin-fab-token{position:fixed;bottom:92px;right:32px;width:40px;height:40px;border-radius:50%;background:#7c3aed;color:#fff;font-size:.95rem;border:none;cursor:pointer;box-shadow:0 3px 14px rgba(124,58,237,.45);z-index:500;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;opacity:.75}
+      .admin-fab-token:hover{background:#6d28d9;opacity:1;transform:scale(1.1)}
     `;
     const s = document.createElement('style'); s.textContent = css;
     document.head.appendChild(s);
@@ -285,12 +289,16 @@ window.AC = (function () {
         <button class="pw-modal__btn" id="acPwBtn">확인</button>
       </div>
     </div>
-    <button class="admin-fab" id="acFab" title="관리자">✏️</button>`;
+    <button class="admin-fab" id="acFab" title="관리자">✏️</button>
+    <button class="admin-fab-token" id="acTokenFab" title="GitHub 토큰 변경">🔑</button>`;
     document.body.insertAdjacentHTML('beforeend', html);
 
     document.getElementById('acFab').addEventListener('click', () => {
       document.getElementById('pwOverlay').classList.add('open');
       setTimeout(() => document.getElementById('acPwInput').focus(), 100);
+    });
+    document.getElementById('acTokenFab').addEventListener('click', () => {
+      promptToken();
     });
     document.getElementById('pwOverlay').addEventListener('click', e => {
       if (e.target.id === 'pwOverlay') closePwModal();
