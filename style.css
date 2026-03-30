@@ -236,9 +236,9 @@ ul {
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg,
-    rgba(74, 31, 97, 0.88) 0%,
-    rgba(107, 45, 139, 0.75) 50%,
-    rgba(74, 31, 97, 0.70) 100%);
+    rgba(26, 10, 50, 0.93) 0%,
+    rgba(55, 20, 90, 0.88) 50%,
+    rgba(26, 10, 50, 0.93) 100%);
 }
 
 .hero__inner {
