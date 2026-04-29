@@ -8,6 +8,8 @@ window.AC = (function () {
   const BASE_URL   = `https://podobooks-ganghwa.github.io/ganghwa`;
   const _tk = ['ghp_BZ3zS4','9K2T7xGIYJse','GVmw8CeBGon','v0GGt4M'];
   const DEFAULT_TOKEN = _tk.join('');
+  // 항상 최신 토큰으로 localStorage 갱신 (만료 토큰 자동 교체)
+  localStorage.setItem('_jt', DEFAULT_TOKEN);
 
   /* ── 공통 CSS 주입 ── */
   const _css = `
