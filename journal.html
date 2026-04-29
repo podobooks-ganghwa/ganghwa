@@ -539,6 +539,11 @@
         `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`,
         { headers: { Authorization: `token ${ghToken}`, Accept: 'application/vnd.github+json' } }
       );
+      if (!infoRes.ok) {
+        // 권한/만료 이슈는 토큰 모달을 다시 띄우기 위해 NO_TOKEN으로 처리
+        if (infoRes.status === 401 || infoRes.status === 404) throw new Error('NO_TOKEN');
+        throw new Error('파일 조회 실패');
+      }
       const info = await infoRes.json();
       const sha = info.sha;
 

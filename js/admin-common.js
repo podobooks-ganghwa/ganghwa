@@ -80,7 +80,11 @@ window.AC = (function () {
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`,
       { headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' } }
     );
-    if (!infoRes.ok) throw new Error('파일 조회 실패');
+    if (!infoRes.ok) {
+      // 401(인증실패) 또는 404(권한없음 - GitHub는 공개저장소 쓰기 권한 없을때 404 반환) 모두 토큰 문제로 취급
+      if (infoRes.status === 401 || infoRes.status === 404) throw new Error('NO_TOKEN');
+      throw new Error('파일 조회 실패');
+    }
     const { sha } = await infoRes.json();
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
     const putRes = await fetch(
