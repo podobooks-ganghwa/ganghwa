@@ -353,7 +353,7 @@
 <body>
 
   <!-- 헤더 -->
-  <div class="ver-bar">🍇 강화포도책방 &nbsp;|&nbsp; ver 0.004</div>
+  <div class="ver-bar">🍇 강화포도책방 &nbsp;|&nbsp; ver 0.005</div>
   <header class="header scrolled" id="header">
     <div class="container header__inner">
       <a href="index.html" class="header__logo">
@@ -497,10 +497,8 @@
     let isAdmin = false;
     let selectedEmoji = '📖';
     // 토큰은 항상 localStorage에서 동적으로 읽음, 없으면 기본 토큰 사용
-    const _tk = ['github_pat','_11AVK5NGY0A','ZSPWYLvisCb_0VwqJz8Birk9zFef','slNNZ1DcxaaFKc5lNhagVJz5Gn3ZNCZH7Y3uuKoklu2'];
-    const DEFAULT_TOKEN = _tk.join('');
     function getGhToken() {
-      return localStorage.getItem('_jt') || sessionStorage.getItem('_jt') || DEFAULT_TOKEN;
+      return localStorage.getItem('_jt') || AC.getToken();
     }
     let ghToken = getGhToken();
     let imgUploader = null;
