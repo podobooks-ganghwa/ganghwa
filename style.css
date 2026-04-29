@@ -43,8 +43,11 @@ html {
   letter-spacing: 0.06em;
   text-align: center;
   padding: 7px 0;
-  position: relative;
-  z-index: 1100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
   user-select: none;
   box-shadow: 0 2px 8px rgba(91,45,142,0.25);
 }
@@ -145,7 +148,7 @@ ul {
    =================================== */
 .header {
   position: fixed;
-  top: 0;
+  top: 34px;
   left: 0;
   right: 0;
   z-index: 100;
@@ -242,7 +245,7 @@ ul {
   background-size: cover;
   background-position: center;
   overflow: hidden;
-  padding-top: 80px;
+  padding-top: 114px;
 }
 
 .hero::before {
