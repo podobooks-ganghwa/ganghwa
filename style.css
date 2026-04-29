@@ -35,6 +35,19 @@ html {
   color-scheme: light;
 }
 
+.ver-bar {
+  background: #1a1a2e;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 4px 0;
+  position: relative;
+  z-index: 1100;
+  user-select: none;
+}
+
 body {
   font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
   color: #1a1a2e;
