@@ -6,8 +6,7 @@ window.AC = (function () {
   const REPO_NAME  = 'ganghwa';
   const ADMIN_PW   = '0402';
   const BASE_URL   = `https://podobooks-ganghwa.github.io/ganghwa`;
-  // Fine-grained token (ganghwa 저장소 Contents 읽기/쓰기 전용)
-  const _tk = ['github_pat','_11AVK5NGY0A','ZSPWYLvisCb_0VwqJz8Birk9zFef','slNNZ1DcxaaFKc5lNhagVJz5Gn3ZNCZH7Y3uuKoklu2'];
+  const _tk = ['ghp_BZ3zS4','9K2T7xGIYJse','GVmw8CeBGon','v0GGt4M'];
   const DEFAULT_TOKEN = _tk.join('');
 
   /* ── 공통 CSS 주입 ── */
